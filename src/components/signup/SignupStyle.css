@@ -1,0 +1,30 @@
+.signup-image {
+  border-radius: 0;
+}
+
+@media only screen and (min-width: 1024px) {
+  .signup-image {
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+  }
+}
+
+.user-signup-form {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 10px;
+}
+
+@media only screen and (min-width: 1024px) {
+  .user-signup-form {
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 0px 0px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    border-radius: 10px;
+  }
+}
