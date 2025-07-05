@@ -48,7 +48,7 @@ const LoginForm = () => {
         setLoading(false);
         const updatedSession = await getSession();
         if (updatedSession?.user?.role) {
-          route.push("/journal");
+          route.push("/");
         }
       }
     } catch (error) {

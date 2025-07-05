@@ -57,6 +57,9 @@ const DashSidebar = () => {
               <Nav.Item href="/users" eventKey="1" as={NavLink}>
                 Users
               </Nav.Item>
+              <Nav.Item href="/medicine-category" eventKey="1" as={NavLink}>
+                Medicine Category
+              </Nav.Item>
             </Nav>
           </Sidenav.Body>
         </Sidenav>

@@ -8,5 +8,5 @@ export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: axiosBaseQuery({ baseUrl: config.server_url as string }),
   endpoints: () => ({}),
-  tagTypes: [],
+  tagTypes: ["user-list", "supplier-list", "single-supplier", "category-list", "single-category", "generic-list", "single-generic", "medicine-list", "single-medicine"],
 });
