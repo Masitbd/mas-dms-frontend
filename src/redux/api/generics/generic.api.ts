@@ -7,6 +7,7 @@ const genericApi = baseApi.injectEndpoints({
         url: "/generics",
         method: "POST",
         body: data,
+        data: data,
       }),
       invalidatesTags: ["generic-list"],
     }),
@@ -25,11 +26,19 @@ const genericApi = baseApi.injectEndpoints({
       }),
       providesTags: ["single-generic"],
     }),
+    getGenericQuery: build.query({
+      query: (id: string) => ({
+        url: `/generics/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["single-generic"],
+    }),
     updateGeneric: build.mutation({
       query: ({ id, data }) => ({
         url: `/generics/${id}`,
         method: "PATCH",
         body: data,
+        data: data,
       }),
       invalidatesTags: ["generic-list", "single-generic"],
     }),
@@ -47,6 +56,7 @@ export const {
   useCreateGenericMutation,
   useGetGenericsQuery,
   useGetSingleGenericQuery,
+  useGetGenericQuery,
   useUpdateGenericMutation,
   useDeleteGenericMutation,
 } = genericApi;

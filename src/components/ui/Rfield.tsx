@@ -9,7 +9,7 @@ type RFieldProps<
   TName extends Path<TFieldValues>
 > = {
   label?: ReactElement;
-  as: React.ComponentType<TComponentProps>;
+  as: React.ElementType<any>;
   field: ControllerRenderProps<TFieldValues, TName>;
   error?: string;
   type: "text" | "date" | "number" | "select" | "password";
@@ -26,18 +26,23 @@ export const Rfield = <
   error,
   ...rest
 }: RFieldProps<TComponentProps, TFieldValues, TName>) => {
+  const Comp = Component as React.ElementType;
   return (
     <Form.Group>
       <Form.ControlLabel className="flex! items-center gap-2 font-medium text-gray-700 mb-2 w-full">
         {label}
       </Form.ControlLabel>
-      <Component
+      <Comp
         {...(rest as TComponentProps)}
         id={field.name}
         value={field.value}
         onChange={field.onChange}
       />
-      {error && <Form.ErrorMessage>{error}</Form.ErrorMessage>}
+      {error && (
+        <Form.ErrorMessage show={error as unknown as boolean}>
+          {error}
+        </Form.ErrorMessage>
+      )}
     </Form.Group>
   );
 };

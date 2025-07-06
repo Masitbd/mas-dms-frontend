@@ -1,27 +1,27 @@
 "use client";
-import CategroyHeader from "@/components/category/CategoryHeader";
-import CategoryTable from "@/components/category/CategoryTable";
+import GenericHeader from "@/components/generics/GenericHeader";
+import GenericTable from "@/components/generics/GenericTable";
 import RPagination from "@/components/RPagination";
 import useQueryBuilder from "@/helpers/QueryBUilder";
-import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
+import { useGetGenericsQuery } from "@/redux/api/generics/generic.api";
 import React from "react";
 
-const Category = () => {
+const Generic = () => {
   const { addField, deleteField, query } = useQueryBuilder();
   const {
-    data: categoryData,
+    data: genericData,
     isLoading,
     isFetching,
-  } = useGetCategoriesQuery(query);
-  console.log(categoryData);
+  } = useGetGenericsQuery(query);
+
   return (
     <div>
       <div className="my-2">
-        <CategroyHeader addField={addField} />
+        <GenericHeader addField={addField} />
       </div>
       <div>
-        <CategoryTable
-          data={categoryData?.data}
+        <GenericTable
+          data={genericData?.data}
           isLoading={isLoading || isFetching}
         />
       </div>
@@ -30,11 +30,11 @@ const Category = () => {
           addField={addField}
           deleteField={deleteField}
           query={query}
-          total={categoryData?.meta?.total}
+          total={genericData?.meta?.total}
         />
       </div>
     </div>
   );
 };
 
-export default Category;
+export default Generic;
