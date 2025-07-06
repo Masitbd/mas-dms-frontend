@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MAS Pharmacy Frontend
+
+This is the frontend for the MAS Pharmacy Management System, a comprehensive solution for managing pharmacy operations. This application is built with Next.js, Redux, and rsuite.
+
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Running the Application](#running-the-application)
+- [Available Scripts](#available-scripts)
+- [Technologies Used](#technologies-used)
+- [Project Structure](#project-structure)
+- [Authentication](#authentication)
+- [Deployment](#deployment)
+
+## Features
+
+- **User Management:** Add, edit, and manage user accounts.
+- **Medicine Category Management:** Organize and categorize medicines.
+- **Authentication:** Secure login and registration functionality using NextAuth.js.
+- **Responsive UI:** The application is designed to work on various screen sizes.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v20 or later)
+- npm or yarn
+
+### Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/your-username/mas-pharmacy-frontend.git
+    ```
+2.  Navigate to the project directory:
+    ```bash
+    cd mas-pharmacy-frontend
+    ```
+3.  Install the dependencies:
+    ```bash
+    npm install
+    ```
+
+## Running the Application
+
+To run the application in development mode, use the following command:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will start the development server at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev`: Starts the development server with Turbopack.
+- `npm run build`: Builds the application for production.
+- `npm run start`: Starts the production server.
+- `npm run lint`: Lints the codebase for errors.
 
-## Learn More
+## Technologies Used
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework:** [Next.js](https://nextjs.org/)
+- **State Management:** [Redux Toolkit](https://redux-toolkit.js.org/)
+- **UI Library:** [rsuite](https://rsuitejs.com/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/)
+- **Form Management:** [React Hook Form](https://react-hook-form.com/)
+- **Schema Validation:** [Yup](https://github.com/jquense/yup) & [Zod](https://zod.dev/)
+- **API Communication:** [Axios](https://axios-http.com/)
+- **Icons:** [Font Awesome](https://fontawesome.com/), [Heroicons](https://heroicons.com/), [Lucide React](https://lucide.dev/guide/packages/lucide-react)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The project follows a standard Next.js `src` directory structure.
 
-## Deploy on Vercel
+- `src/app`: Contains the application's pages and layouts.
+- `src/components`: Reusable components used throughout the application.
+- `src/redux`: Redux store, slices, and API definitions.
+- `src/lib`: Utility functions and custom hooks.
+- `src/helpers`: Helper functions for various tasks.
+- `src/enums`: Enum definitions.
+- `public`: Static assets like images and fonts.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Authentication
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Authentication is handled by NextAuth.js. The configuration can be found in `src/app/api/auth/[...nextauth]`. The `middleware.ts` file protects routes and handles redirection based on user authentication status.
+
+## Deployment
+
+The application is ready to be deployed on any platform that supports Next.js, such as Vercel or Netlify.
