@@ -8,9 +8,7 @@ import React from "react";
 const Suppliers = () => {
   const { addField, deleteField, query } = useQueryBuilder();
 
-  const { data: suppliers, isLoading } = useGetSuppliersQuery(undefined);
-
-  console.log(suppliers, " suppliers data");
+  const { data: suppliers, isLoading } = useGetSuppliersQuery(query);
 
   return (
     <div className="p-4">
