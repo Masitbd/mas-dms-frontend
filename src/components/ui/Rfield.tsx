@@ -9,7 +9,7 @@ type RFieldProps<
   TName extends Path<TFieldValues>
 > = {
   label?: ReactElement;
-  as: React.ElementType<any>;
+  as: React.ElementType<any> ;
   field: ControllerRenderProps<TFieldValues, TName>;
   error?: string;
   type: "text" | "date" | "number" | "select" | "password" | "email";

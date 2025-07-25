@@ -12,7 +12,7 @@ const genericApi = baseApi.injectEndpoints({
       invalidatesTags: ["generic-list"],
     }),
     getGenerics: build.query({
-      query: (query: Record<string, string>) => ({
+      query: (query) => ({
         url: "/generics",
         method: "GET",
         params: query,
@@ -56,7 +56,7 @@ export const {
   useCreateGenericMutation,
   useGetGenericsQuery,
   useGetSingleGenericQuery,
-  useGetGenericQuery,
+
   useUpdateGenericMutation,
   useDeleteGenericMutation,
 } = genericApi;

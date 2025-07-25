@@ -7,6 +7,7 @@ const medicineApi = baseApi.injectEndpoints({
         url: "/medicines/create-medicine",
         method: "POST",
         body: data,
+        data: data,
       }),
       invalidatesTags: ["medicine-list"],
     }),

@@ -63,7 +63,10 @@ const DashSidebar = () => {
               <Nav.Item href="/generics" eventKey="3" as={NavLink}>
                 Medicine Generics
               </Nav.Item>
-              <Nav.Item href="/supplier" eventKey="4" as={NavLink}>
+              <Nav.Item href="/medicine-entry" eventKey="4" as={NavLink}>
+                Medicine Entry
+              </Nav.Item>
+              <Nav.Item href="/supplier" eventKey="5" as={NavLink}>
                 Supplier List
               </Nav.Item>
             </Nav>
