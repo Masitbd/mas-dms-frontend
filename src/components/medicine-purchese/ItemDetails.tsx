@@ -14,6 +14,9 @@ import {
 } from "rsuite";
 import { Rfield as Field } from "../ui/Rfield";
 import { Package, Calendar, DollarSign, Percent, Edit } from "lucide-react";
+import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
+import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
+import { useGetSuppliersQuery } from "@/redux/api/suppliers/supplier.api";
 
 export interface ItemDetailData {
   category: string;
@@ -25,6 +28,7 @@ export interface ItemDetailData {
   dateMfg: Date;
   vat: number;
   discount: number;
+  batchNo: string;
 }
 
 export interface PurchaseDetailItem extends ItemDetailData {
@@ -70,6 +74,24 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
   onEdit,
   editItem,
 }) => {
+  // Data source
+  const {
+    data: categoryData,
+    isLoading: categoryDataLoading,
+    isFetching: categoryDataFetching,
+  } = useGetCategoriesQuery({ limit: 10000 });
+
+  const {
+    data: medicineData,
+    isLoading: medicineDataLoading,
+    isFetching: medicineDataFetching,
+  } = useGetMedicinesQuery({ limit: 10000 as unknown as string });
+
+  const {
+    data: supplierData,
+    isLoading: supplierDataLoading,
+    isFetching: supplierDataFetching,
+  } = useGetSuppliersQuery({ limit: 1000 });
   const isEditMode = !!editItem;
 
   const {
@@ -154,7 +176,7 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
   return (
     <Modal open={open} onClose={handleClose} size="lg">
       <Modal.Header>
-        <Modal.Title className="flex items-center gap-2">
+        <Modal.Title className="flex! items-center gap-2 flex-row! ">
           {isEditMode ? (
             <>
               <Edit className="w-5 h-5 text-orange-600" />
@@ -169,27 +191,30 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
         </Modal.Title>
       </Modal.Header>
 
-      <Modal.Body>
+      <Modal.Body className="">
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Grid fluid>
+          <Grid fluid className="overflow-x-hidden">
             <Row gutter={16} className="mb-4">
               <Col xs={12}>
                 <Form.ControlLabel className="font-medium text-gray-700 mb-2">
-                  Category
+                  Supplier
                 </Form.ControlLabel>
                 <Controller
                   name="category"
                   control={control}
-                  rules={{ required: "Category is required" }}
+                  rules={{ required: "Supplier is required" }}
                   render={({ field }) => (
                     <Field
                       as={SelectPicker}
                       field={field}
                       error={errors.category?.message}
-                      data={categoryOptions}
-                      placeholder="Select category"
+                      data={supplierData?.data?.map?.((d) => ({
+                        label: d?.name,
+                        value: d?._id,
+                      }))}
+                      placeholder="Select Supplier"
                       block
-                      searchable={false}
+                      searchable={true}
                     />
                   )}
                 />
@@ -208,7 +233,10 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                       as={SelectPicker}
                       field={field}
                       error={errors.medicineName?.message}
-                      data={medicineOptions}
+                      data={medicineData?.data?.data?.map?.((d) => ({
+                        label: d?.name,
+                        value: d?._id,
+                      }))}
                       placeholder="Select medicine"
                       block
                       searchable
@@ -293,7 +321,7 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
             </Row>
 
             <Row gutter={16} className="mb-4">
-              <Col xs={12}>
+              <Col xs={8}>
                 <Form.ControlLabel className="flex items-center gap-1 font-medium text-gray-700 mb-2">
                   <Calendar className="w-4 h-4" />
                   Manufacturing Date
@@ -315,7 +343,7 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                 />
               </Col>
 
-              <Col xs={12}>
+              <Col xs={8}>
                 <Form.ControlLabel className="flex items-center gap-1 font-medium text-gray-700 mb-2">
                   <Calendar className="w-4 h-4" />
                   Expiry Date
@@ -331,6 +359,26 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                       error={errors.dateExpire?.message}
                       placeholder="Select date"
                       format="dd-MMM-yyyy"
+                      block
+                    />
+                  )}
+                />
+              </Col>
+              <Col xs={8}>
+                <Form.ControlLabel className="flex items-center gap-1 font-medium text-gray-700 mb-2">
+                  <Calendar className="w-4 h-4" />
+                  Batch No.
+                </Form.ControlLabel>
+                <Controller
+                  name="batchNo"
+                  control={control}
+                  rules={{ required: "Batch No. is required" }}
+                  render={({ field }) => (
+                    <Field
+                      as={Input}
+                      field={field}
+                      error={errors.batchNo?.message}
+                      placeholder="Batch No."
                       block
                     />
                   )}

@@ -2,7 +2,7 @@ import { Printer, RefreshCw, Save, X } from "lucide-react";
 import React from "react";
 import { Button } from "rsuite";
 
-const Bottom = () => {
+const Bottom = ({ watch }: { watch: (p: string) => number }) => {
   return (
     <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
       <div className="mx-auto px-6 py-4">
@@ -12,32 +12,35 @@ const Bottom = () => {
             <div className="flex items-center gap-2">
               <span className="text-gray-600 font-medium">Subtotal:</span>
               <span className="text-lg font-bold text-gray-800">
-                ৳ 80000
-                {/* {(watch("totalAmount") || 0).toFixed(2)} */}
+                ৳{(watch("totalAmount") || 0).toFixed(2)}
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <span className="text-gray-600 font-medium">VAT:</span>
               <span className="text-lg font-bold text-green-600">
-                +৳ 8787878
-                {/* {(watch("vatAmount") || 0).toFixed(2)} */}
+                +৳
+                {(watch("vatAmount") || 0).toFixed(2)}
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <span className="text-gray-600 font-medium">Discount:</span>
               <span className="text-lg font-bold text-red-600">
-                -৳ 55555
-                {/* {(watch("discountAmount") || 0).toFixed(2)} */}
+                -৳
+                {(watch("discountAmount") || 0).toFixed(2)}
               </span>
             </div>
 
             <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg border border-blue-200">
               <span className="text-gray-700 font-medium">Total:</span>
               <span className="text-xl font-bold text-blue-600">
-                ৳ 50000
-                {/* {calculateFinalAmount().toFixed(2)} */}
+                ৳
+                {(
+                  (watch("totalAmount") || 0) +
+                    (watch("vatAmount") || 0) -
+                    (watch("discountAmount") || 0) || 0
+                ).toFixed(2)}
               </span>
             </div>
           </div>
@@ -81,6 +84,8 @@ const Bottom = () => {
               // onClick={handleSubmit(onSubmit)}
               // loading={isSubmitting}
               className="bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700 px-6"
+              type="submit"
+              form="test111"
             >
               Save Purchase
             </Button>

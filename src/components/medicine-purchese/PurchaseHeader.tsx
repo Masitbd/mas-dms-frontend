@@ -14,6 +14,7 @@ import {
 } from "rsuite";
 import { Rfield } from "../ui/Rfield";
 import { ShoppingCart, Calendar, User, Receipt } from "lucide-react";
+import { useGetSuppliersQuery } from "@/redux/api/suppliers/supplier.api";
 
 export interface PurchaseHeaderData {
   challanNo: string;
@@ -51,6 +52,8 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
     });
   };
 
+  const { data: supplierData } = useGetSuppliersQuery({ limit: 1000 });
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
@@ -82,15 +85,14 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
             <Controller
               name="challanNo"
               control={control}
-              rules={{ required: "Challan number is required" }}
               render={({ field }) => (
                 <Rfield
                   as={Input}
                   field={field}
                   error={errors.challanNo?.message as string}
-                  placeholder="Enter challan number"
                   size="md"
                   fluid
+                  disabled
                   block
                 />
               )}
@@ -99,15 +101,18 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
 
           <Col xs={24} sm={8}>
             <Controller
-              name="supplierName"
+              name="supplierId"
               control={control}
               rules={{ required: "Supplier name is required" }}
               render={({ field }) => (
-                <Rfield<SelectPickerProps, PurchaseHeaderData, "supplierName">
+                <Rfield<SelectPickerProps, PurchaseHeaderData, "supplierId">
                   as={SelectPicker}
                   field={field}
                   error={errors.supplierName?.message as string}
-                  data={supplierOptions}
+                  data={supplierData?.data?.map?.((d) => ({
+                    label: d?.name,
+                    value: d?._id,
+                  }))}
                   placeholder="Select supplier"
                   size="lg"
                   searchable={false}
@@ -157,10 +162,6 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
             <Controller
               name="totalAmount"
               control={control}
-              rules={{
-                required: "Total amount is required",
-                min: { value: 0, message: "Amount must be positive" },
-              }}
               render={({ field }) => (
                 <Rfield
                   as={InputNumber}
@@ -172,6 +173,7 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
                   step={0.01}
                   readOnly={totalAmountReadOnly}
                   fluid
+                  disabled
                 />
               )}
             />

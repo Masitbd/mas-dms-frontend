@@ -14,6 +14,8 @@ import { PurchaseHeaderData, PurchaseHeaderForm } from "./PurchaseHeader";
 import { TaxDiscountData, TaxDiscountForm } from "./TaxDiscount";
 import { ItemsTable } from "./ItemsTable";
 import Bottom from "./Bottom";
+import { useCreatePurchaseMutation } from "@/redux/api/purchase/purchase.api";
+import { useRouter } from "next/navigation";
 interface CombinedPurchaseData extends PurchaseHeaderData, TaxDiscountData {}
 
 export const PurchaseInterface: React.FC = () => {
@@ -30,6 +32,7 @@ export const PurchaseInterface: React.FC = () => {
     watch,
     setValue,
     reset,
+
     formState: { errors, isSubmitting },
   } = useForm<CombinedPurchaseData>({
     defaultValues: {
@@ -78,7 +81,11 @@ export const PurchaseInterface: React.FC = () => {
     }
   }, [purchaseItems, setValue]);
 
-  const onSubmit = (data: CombinedPurchaseData) => {
+  // Submission
+  const router = useRouter();
+  const [postData] = useCreatePurchaseMutation();
+  const onSubmit = async (data: CombinedPurchaseData) => {
+    console.log("hi");
     if (purchaseItems.length === 0) {
       toaster.push(
         <Message type="warning" showIcon>
@@ -95,14 +102,17 @@ export const PurchaseInterface: React.FC = () => {
       finalAmount: data.totalAmount + data.vatAmount - data.discountAmount,
     };
 
-    console.log("Complete Purchase Data:", submissionData);
+    const result = await postData(submissionData).unwrap();
 
-    toaster.push(
-      <Message type="success" showIcon>
-        Purchase saved successfully!
-      </Message>,
-      { placement: "topCenter" }
-    );
+    if (result?.success) {
+      toaster.push(
+        <Message type="success" showIcon>
+          Purchase saved successfully!
+        </Message>,
+        { placement: "topCenter" }
+      );
+      router.push("/medicine-purchase");
+    }
   };
 
   const handleAddItem = (item: Omit<PurchaseDetailItem, "id">) => {
@@ -213,7 +223,7 @@ export const PurchaseInterface: React.FC = () => {
           </div>
         </div> */}
 
-        <Form onSubmit={handleSubmit(onSubmit)} fluid>
+        <Form onSubmit={handleSubmit(onSubmit)} fluid id="test111">
           {/* Purchase Header Form */}
           <PurchaseHeaderForm
             control={control}
@@ -273,7 +283,7 @@ export const PurchaseInterface: React.FC = () => {
           onEdit={handleUpdateItem}
           editItem={editingItem}
         />
-        <Bottom />
+        <Bottom watch={watch} />
       </div>
     </div>
   );

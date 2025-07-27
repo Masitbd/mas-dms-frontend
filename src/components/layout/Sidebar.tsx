@@ -69,6 +69,9 @@ const DashSidebar = () => {
               <Nav.Item href="/supplier" eventKey="5" as={NavLink}>
                 Supplier List
               </Nav.Item>
+              <Nav.Item href="/medicine-purchase" eventKey="6" as={NavLink}>
+                Purchase Entry
+              </Nav.Item>
             </Nav>
           </Sidenav.Body>
         </Sidenav>
