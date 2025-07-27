@@ -12,7 +12,7 @@ const categoryApi = baseApi.injectEndpoints({
       invalidatesTags: ["category-list"],
     }),
     getCategories: build.query({
-      query: (query: Record<string, string>) => ({
+      query: (query) => ({
         url: "/category",
         method: "GET",
         params: query,

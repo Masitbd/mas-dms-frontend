@@ -7,6 +7,7 @@ const supplierApi = baseApi.injectEndpoints({
         url: "/suppliers/create-supplier",
         method: "POST",
         body: data,
+        data: data,
       }),
       invalidatesTags: ["supplier-list"],
     }),
