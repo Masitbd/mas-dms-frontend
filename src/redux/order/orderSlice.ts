@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk, Action } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 export interface IMedicineSale {
+  item: {
+    _id: string;
+  };
+  name: string;
   medicineId: string;
   quantity: number;
   salesRate: number;
@@ -41,6 +46,27 @@ export type IUnregisteredCustomerInfo = {
 
 const balanceUpdater = (state: IOrder) => {
   if (state.medicines) {
+    // per row total
+    state.medicines = state.medicines.map((item) => {
+      const rowTotal = item.salesRate * item.quantity;
+      const discountAmount = (rowTotal * (item.discount || 0)) / 100;
+      const vatAmount = item.isVat
+        ? ((rowTotal - discountAmount) * (state.vat || 0)) / 100
+        : 0;
+      const finalTotal = rowTotal - discountAmount + vatAmount;
+
+   
+
+      return {
+        ...item,
+        rowTotal,
+        discountAmount,
+        vatAmount,
+        finalTotal,
+        total_price: finalTotal,
+      };
+    });
+
     // 1. Total bill
     state.totalBill = state.medicines.reduce((total, item) => {
       return total + item.salesRate * item.quantity;
@@ -122,6 +148,7 @@ const billSlice = createSlice({
       balanceUpdater(state);
     },
     addItem: (state, { payload }) => {
+      console.log(payload, "in r");
       if (state.medicines) {
         state.medicines.push(payload);
       } else {
@@ -133,7 +160,7 @@ const billSlice = createSlice({
     removeItem: (state, action) => {
       if (state.medicines?.length)
         state.medicines = state.medicines.filter(
-          (item) => item.medicineId !== action.payload
+          (item) => item.item._id !== action.payload
         );
 
       balanceUpdater(state);
@@ -141,7 +168,7 @@ const billSlice = createSlice({
     toggleDiscount: (state, action) => {
       if (state.medicines && state.medicines.length) {
         const item = state.medicines.find(
-          (item) => item.medicineId === action.payload
+          (item) => item._id === action.payload
         );
         // if (item) {
         //   item.isDiscount = !item.isDiscount;
@@ -152,7 +179,7 @@ const billSlice = createSlice({
     toggleVat: (state, action) => {
       if (state.medicines && state.medicines.length) {
         const item = state.medicines.find(
-          (item) => item.medicineId === action.payload
+          (item) => item._id === action.payload
         );
         if (item) {
           item.isVat = !item.isVat;
@@ -160,24 +187,23 @@ const billSlice = createSlice({
       }
       balanceUpdater(state);
     },
+
     incrementQty: (state, action) => {
       if (state?.medicines?.length) {
         const index = state.medicines.findIndex(
-          (item) => item.medicineId === action.payload
+          (entry) => entry.item?._id === action.payload
         );
         if (index !== -1) {
-          state.medicines[index] = {
-            ...state.medicines[index],
-            quantity: state.medicines[index].quantity + 1,
-          };
+          state.medicines[index].quantity += 1;
           balanceUpdater(state);
         }
       }
     },
+
     decrementQty: (state, action) => {
       if (state?.medicines?.length) {
         const index = state.medicines.findIndex(
-          (item) => item.medicineId === action.payload
+          (item) => item.item._id === action.payload
         );
         if (index !== -1) {
           if (state.medicines[index].quantity > 1) {
@@ -196,7 +222,7 @@ const billSlice = createSlice({
     changeQty: (state, { payload }) => {
       if (state?.medicines?.length) {
         const index = state.medicines.findIndex(
-          (item) => item.medicineId === payload?.itemCode
+          (item) => item._id === payload?._id
         );
         if (index !== -1) {
           state.medicines[index] = {
@@ -211,7 +237,7 @@ const billSlice = createSlice({
     setItemDiscount: (state, { payload }) => {
       if (state?.medicines?.length) {
         const index = state.medicines.findIndex(
-          (item) => item?.medicineId == payload?.item?.itemCode
+          (item) => item?._id == payload?.item?._id
         );
         if (index !== -1) {
           state.medicines[index].discount = payload?.discount;
@@ -221,20 +247,6 @@ const billSlice = createSlice({
     },
     resetBill: () => initialState,
   },
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(saveBill.pending, (state) => {
-  //       state.loading = true;
-  //     })
-  //     .addCase(saveBill.fulfilled, (state) => {
-  //       state.loading = false;
-  //       state.error = null;
-  //     })
-  //     .addCase(saveBill.rejected, (state, action) => {
-  //       state.loading = false;
-  //       state.error = action.payload;
-  //     });
-  // },
 });
 
 export const {
@@ -251,3 +263,5 @@ export const {
   //   updateCustomerInfo,
 } = billSlice.actions;
 export default billSlice.reducer;
+
+// export const CurrentToken = (state: RootState) => state.order.finaltotal

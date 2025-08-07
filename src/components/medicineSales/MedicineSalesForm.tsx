@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Ref, useEffect, useRef, useState } from "react";
 import { Controller, useForm, UseFormReset } from "react-hook-form";
 import {
   Button,
@@ -39,6 +39,7 @@ import {
   toggleDiscount,
   toggleVat,
 } from "@/redux/order/orderSlice";
+import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
 
 interface CategoryFormProps {
   defaultValues?: Partial<ISaleFormData>;
@@ -78,11 +79,24 @@ const MedicienSalesForm = ({
   const [item, setItem] = useState<IMedicineSale>();
   const [qty, setQty] = useState(1);
 
+  console.log(item, "item in state");
+
   const routes = useRouter();
   const cancelHandler = () => {
     reset({ name: "", address: "" });
     routes.push("/category");
   };
+
+  const queryParams: Record<string, any> = {};
+  // api calling
+
+  if (searchTerm) queryParams.searchTerm = searchTerm;
+
+  const {
+    data: medicineitems,
+    isLoading,
+    isFetching,
+  } = useGetMedicinesQuery(queryParams);
 
   const onSubmit = async (data: ISaleFormData) => {
     try {
@@ -105,7 +119,7 @@ const MedicienSalesForm = ({
   const handleAdd = () => {
     const doesExists =
       state?.medicines?.length &&
-      state.medicines.find((i) => i?.medicineId == item?._id);
+      state.medicines.find((i) => i?.item?._id == item?._id);
 
     if (qty < 1) {
       toaster.push(
@@ -119,8 +133,8 @@ const MedicienSalesForm = ({
       return;
     }
     const data = {
-      qty: qty,
-      rate: item?.salesRate,
+      quantity: qty,
+      salesRate: item?.salesRate,
       item: item,
       discount: item?.discount ?? 0,
 
@@ -136,8 +150,8 @@ const MedicienSalesForm = ({
   };
 
   const handleRemove = (id: string) => {
-    console.log(id);
     dispatch(removeItem(id));
+    setItem(null as unknown as IMedicineSale);
   };
 
   const handleIncrementQty = (id: string) => {
@@ -329,25 +343,22 @@ const MedicienSalesForm = ({
                 caretAs={SearchIcon}
                 searchable
                 block
-                placeholder={"Medicine name"}
-                // data={consumptionData?.data?.map(
-                //   (cd: IMenuItemConsumption) => ({
-                //     label: cd?.itemName,
-                //     value: cd?._id,
-                //     children: cd,
-                //   })
-                // )}
-                // onSelect={(v, v1, v2) =>
-                //   selectHandler(v1?.children as unknown as IMenuItemConsumption)
-                // }
-                // value={item?._id}
-                // disabledItemValues={
-                //   state?.items?.map((i) => i?.item?._id) as string[]
-                // }
-                // onSearch={(v) => setSearchTerm(v)}
-                // loading={consumptionDataFeatching || consumptionDataFeatching}
-                // ref={itemNameRef as Ref<PickerHandle>}
-                data={[]}
+                placeholder={"Item name"}
+                data={medicineitems?.data?.result?.map((cd: IMedicineSale) => ({
+                  label: cd?.name,
+                  value: cd?._id,
+                  children: cd,
+                }))}
+                onSelect={(v, v1, v2) =>
+                  selectHandler(v1?.children as unknown as IMedicineSale)
+                }
+                value={item?._id}
+                disabledItemValues={
+                  state?.medicines?.map((i) => i?._id) as string[]
+                }
+                onSearch={(v) => setSearchTerm(v)}
+                loading={isLoading || isFetching}
+                ref={itemNameRef as Ref<PickerHandle>}
               />
             </div>
             <div>
@@ -355,15 +366,15 @@ const MedicienSalesForm = ({
               <Input
                 size="sm"
                 type="number"
-                // onChange={(v) => setQty(Number(v))}
-                // value={qty}
-                // onPressEnter={() => handleAdd()}
-                // ref={qtyRef}
+                onChange={(v) => setQty(Number(v))}
+                value={qty}
+                onPressEnter={() => handleAdd()}
+                ref={qtyRef}
               />
             </div>
             <div>
               <h2>Rate</h2>
-              {/* <Input size="sm" type="number" value={item?.rate} disabled /> */}
+              <Input size="sm" type="number" value={item?.salesRate} disabled />
             </div>
             <div className="">
               <br />
@@ -372,7 +383,7 @@ const MedicienSalesForm = ({
                 appearance="primary"
                 color="green"
                 className="whitespace-pre"
-                // onClick={() => handleAdd()}
+                onClick={() => handleAdd()}
               >
                 Add
               </Button>
@@ -383,11 +394,11 @@ const MedicienSalesForm = ({
             <Table bordered cellBordered height={230} data={state?.medicines}>
               <Column flexGrow={1}>
                 <HeaderCell children="M. Category" />
-                <Cell dataKey="item.itemCode" />
+                <Cell>{(rowData) => rowData?.item?.category?.name}</Cell>
               </Column>
               <Column flexGrow={3}>
                 <HeaderCell children="M. Name" />
-                <Cell dataKey="item.itemName" />
+                <Cell dataKey="item.name" />
               </Column>
               <Column flexGrow={1.2}>
                 <HeaderCell children="Qty" />
@@ -400,23 +411,22 @@ const MedicienSalesForm = ({
                             <Button
                               size="xs"
                               appearance="ghost"
-                              color="blue"
+                              color="orange"
                               onClick={() =>
-                                handleIncrementQty(rowData?.item?.itemCode)
+                                handleDecrementQty(rowData?.item?._id)
                               }
-                              className="cos"
                             >
-                              <PlusRoundIcon />
+                              <MinusRoundIcon />
                             </Button>
                             <Input
-                              value={rowData?.qty}
+                              value={rowData?.quantity}
                               size="sm"
                               type="number"
                               onChange={(v) =>
                                 dispatch(
                                   changeQty({
                                     ...rowData?.item,
-                                    qty: Number(v),
+                                    quantity: Number(v),
                                   })
                                 )
                               }
@@ -425,12 +435,13 @@ const MedicienSalesForm = ({
                             <Button
                               size="xs"
                               appearance="ghost"
-                              color="orange"
+                              color="blue"
                               onClick={() =>
-                                handleDecrementQty(rowData?.item?.itemCode)
+                                handleIncrementQty(rowData?.item?._id)
                               }
+                              className="cos"
                             >
-                              <MinusRoundIcon />
+                              <PlusRoundIcon />
                             </Button>
                           </div>
                         }
@@ -441,7 +452,7 @@ const MedicienSalesForm = ({
               </Column>
               <Column flexGrow={0.7}>
                 <HeaderCell children="Rate" />
-                <Cell dataKey="rate" />
+                <Cell dataKey="salesRate" />
               </Column>
               <Column flexGrow={0.7}>
                 <HeaderCell children="Disc(%)" />
@@ -453,7 +464,7 @@ const MedicienSalesForm = ({
                           size="sm"
                           name="discount"
                           type="number"
-                          className="[&::-webkit-inner-spin-button]:appearance-none"
+                          // className="[&::-webkit-inner-spin-button]:appearance-none"
                           onChange={(v) =>
                             dispatch(
                               setItemDiscount({
@@ -472,30 +483,7 @@ const MedicienSalesForm = ({
               </Column>
               <Column flexGrow={0.7}>
                 <HeaderCell children="Total" />
-                <Cell>
-                  {(rowData) => {
-                    return (
-                      <>
-                        <Input
-                          size="sm"
-                          name="discount"
-                          type="number"
-                          className="[&::-webkit-inner-spin-button]:appearance-none"
-                          onChange={(v) =>
-                            dispatch(
-                              setItemDiscount({
-                                item: rowData?.item,
-                                discount: Number(v),
-                              })
-                            )
-                          }
-                          value={rowData?.discount}
-                          disabled
-                        />
-                      </>
-                    );
-                  }}
-                </Cell>
+                <Cell dataKey="finalTotal" />
               </Column>
 
               <Column flexGrow={0.5}>
@@ -507,7 +495,7 @@ const MedicienSalesForm = ({
                         appearance="primary"
                         color="red"
                         size="sm"
-                        onClick={() => handleRemove(rowData?.item?.itemCode)}
+                        onClick={() => handleRemove(rowData?.item?._id)}
                       >
                         <TrashIcon />
                       </Button>
