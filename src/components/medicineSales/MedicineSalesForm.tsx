@@ -117,8 +117,6 @@ const MedicienSalesForm = ({
         submitHandler &&
         submitHandler(medicinePayload as any, reset);
       mode == ENUM_MODE.VIEW && cancelHandler();
-
-      console.log(medicinePayload, "payload");
     } catch (error) {
       console.error(error);
     }

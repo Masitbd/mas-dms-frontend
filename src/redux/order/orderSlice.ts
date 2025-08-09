@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk, Action } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface IMedicineSale {
   item: {
@@ -166,12 +165,7 @@ const billSlice = createSlice({
     },
     toggleDiscount: (state, action) => {
       if (state.medicines && state.medicines.length) {
-        const item = state.medicines.find(
-          (item) => item._id === action.payload
-        );
-        // if (item) {
-        //   item.isDiscount = !item.isDiscount;
-        // }
+        state.medicines.find((item) => item._id === action.payload);
       }
       balanceUpdater(state);
     },
