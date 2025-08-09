@@ -9,19 +9,23 @@ type ICategoryTableProps = {
   isLoading: boolean;
   data: any[];
 };
-const CategoryTable = ({ data, isLoading }: ICategoryTableProps) => {
+const MedicineSalesTable = ({ data, isLoading }: ICategoryTableProps) => {
   const { Cell, Column, HeaderCell } = Table;
 
   return (
     <div>
       <Table data={data} loading={isLoading} autoHeight>
         <Column flexGrow={1}>
-          <HeaderCell>ID</HeaderCell>
-          <Cell dataKey="categoryId" />
+          <HeaderCell>Invoice No</HeaderCell>
+          <Cell dataKey="invoice_no" />
         </Column>
         <Column flexGrow={2}>
-          <HeaderCell>Category Name</HeaderCell>
-          <Cell dataKey="name" />
+          <HeaderCell>Total Amount</HeaderCell>
+          <Cell dataKey="paymentId.amount" />
+        </Column>
+        <Column flexGrow={2}>
+          <HeaderCell>Posted By</HeaderCell>
+          <Cell dataKey="posted_by" />
         </Column>
         <Column flexGrow={1.5}>
           <HeaderCell>Action</HeaderCell>
@@ -47,4 +51,4 @@ const CategoryTable = ({ data, isLoading }: ICategoryTableProps) => {
   );
 };
 
-export default CategoryTable;
+export default MedicineSalesTable;

@@ -1,7 +1,8 @@
 "use client";
 
-import { ISaleFormData } from "@/components/medicineSales/MedicienSalesInterface";
+
 import MedicienSalesForm from "@/components/medicineSales/MedicineSalesForm";
+
 import { Toast } from "@/components/ui/Toast";
 import { ENUM_MODE } from "@/enums/EnumMode";
 import { useCreateMedicineSalesMutation } from "@/redux/api/medicines/sales.api";
@@ -55,6 +56,7 @@ const page = () => {
           mode={ENUM_MODE.NEW}
         />
       </div>
+     
     </div>
   );
 };
