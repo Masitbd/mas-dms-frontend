@@ -3,7 +3,6 @@ import React, { Ref, useEffect, useRef, useState } from "react";
 import { Controller, useForm, UseFormReset } from "react-hook-form";
 import {
   Button,
-  Checkbox,
   Col,
   Form,
   Grid,
@@ -16,17 +15,15 @@ import {
   Table,
   toaster,
 } from "rsuite";
-import { salesZodSchema, ISaleFormData } from "./MedicienSalesInterface";
+import { ISaleFormData } from "./MedicienSalesInterface";
 import { Rfield } from "../ui/Rfield";
 import PlusRoundIcon from "@rsuite/icons/PlusRound";
 import MinusRoundIcon from "@rsuite/icons/MinusRound";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { ENUM_MODE } from "@/enums/EnumMode";
 import { useRouter } from "next/navigation";
 import { SearchIcon, TrashIcon } from "lucide-react";
-import Column from "rsuite/esm/Table/TableColumn";
-import { Cell, HeaderCell } from "rsuite-table";
+
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import {
   addItem,
@@ -36,10 +33,9 @@ import {
   incrementQty,
   removeItem,
   setItemDiscount,
-  toggleDiscount,
-  toggleVat,
 } from "@/redux/order/orderSlice";
 import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
+import { useSession } from "next-auth/react";
 
 interface CategoryFormProps {
   defaultValues?: Partial<ISaleFormData>;
@@ -69,7 +65,6 @@ const MedicienSalesForm = ({
       name: "",
       ...defaultValues,
     },
-    resolver: zodResolver(salesZodSchema),
   });
   const itemCodeRef = useRef<PickerHandle>(null);
   const itemNameRef = useRef<PickerHandle>(null);
@@ -78,8 +73,6 @@ const MedicienSalesForm = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [item, setItem] = useState<IMedicineSale>();
   const [qty, setQty] = useState(1);
-
-  console.log(item, "item in state");
 
   const routes = useRouter();
   const cancelHandler = () => {
@@ -98,15 +91,6 @@ const MedicienSalesForm = ({
     isFetching,
   } = useGetMedicinesQuery(queryParams);
 
-  const onSubmit = async (data: ISaleFormData) => {
-    try {
-      mode !== ENUM_MODE.VIEW && submitHandler && submitHandler(data, reset);
-      mode == ENUM_MODE.VIEW && cancelHandler();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
     if (defaultValues) {
       reset(defaultValues);
@@ -115,6 +99,30 @@ const MedicienSalesForm = ({
 
   const dispatch = useAppDispatch();
   const state = useAppSelector((state) => state.order);
+
+  const user = useSession() as any;
+
+  const onSubmit = async (data: any) => {
+    try {
+      const medicinePayload = {
+        paypatient_type: state.patient_type,
+        medicines: state.medicines,
+        name: data.name,
+        contact_no: data.contact_no,
+        amount: state.totalBill,
+        // TODO after authenctication
+        posted_by: user?.uuid,
+      };
+      mode !== ENUM_MODE.VIEW &&
+        submitHandler &&
+        submitHandler(medicinePayload as any, reset);
+      mode == ENUM_MODE.VIEW && cancelHandler();
+
+      console.log(medicinePayload, "payload");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleAdd = () => {
     const doesExists =
@@ -134,10 +142,10 @@ const MedicienSalesForm = ({
     }
     const data = {
       quantity: qty,
-      salesRate: item?.salesRate,
+      unit_price: item?.salesRate,
       item: item,
+      medicineId: item?._id,
       discount: item?.discount ?? 0,
-
       isVat: item?.isVat,
     };
     dispatch(addItem(data));
@@ -186,9 +194,6 @@ const MedicienSalesForm = ({
                 <Controller
                   name="name"
                   control={control}
-                  rules={{
-                    required: "Name is required",
-                  }}
                   render={({ field }) => (
                     <Rfield<InputProps, ISaleFormData, "name">
                       as={Input}
@@ -344,7 +349,7 @@ const MedicienSalesForm = ({
                 searchable
                 block
                 placeholder={"Item name"}
-                data={medicineitems?.data?.result?.map((cd: IMedicineSale) => ({
+                data={medicineitems?.data?.data?.map((cd: IMedicineSale) => ({
                   label: cd?.name,
                   value: cd?._id,
                   children: cd,

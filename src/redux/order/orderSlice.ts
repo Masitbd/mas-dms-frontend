@@ -8,7 +8,9 @@ export interface IMedicineSale {
   name: string;
   medicineId: string;
   quantity: number;
+  unit_price: number;
   salesRate: number;
+
   total_price: number;
   discount: number;
   discount_type: string;
@@ -48,14 +50,12 @@ const balanceUpdater = (state: IOrder) => {
   if (state.medicines) {
     // per row total
     state.medicines = state.medicines.map((item) => {
-      const rowTotal = item.salesRate * item.quantity;
+      const rowTotal = item.unit_price * item.quantity;
       const discountAmount = (rowTotal * (item.discount || 0)) / 100;
       const vatAmount = item.isVat
         ? ((rowTotal - discountAmount) * (state.vat || 0)) / 100
         : 0;
       const finalTotal = rowTotal - discountAmount + vatAmount;
-
-   
 
       return {
         ...item,
@@ -69,7 +69,7 @@ const balanceUpdater = (state: IOrder) => {
 
     // 1. Total bill
     state.totalBill = state.medicines.reduce((total, item) => {
-      return total + item.salesRate * item.quantity;
+      return total + item.unit_price * item.quantity;
     }, 0);
 
     // 2. discount
@@ -77,7 +77,7 @@ const balanceUpdater = (state: IOrder) => {
       (
         state.medicines.reduce((total, item) => {
           const itemDiscount =
-            item.salesRate *
+            item.unit_price *
             item.quantity *
             (item.discount
               ? (Number(item.discount) || Number(state.percentDiscount)) / 100
@@ -93,14 +93,14 @@ const balanceUpdater = (state: IOrder) => {
       state.medicines
         .reduce((total, item) => {
           const itemDiscount =
-            item.salesRate *
+            item.unit_price *
             item.quantity *
             (item.discount
               ? (Number(item.discount ?? 0) ||
                   Number(state.percentDiscount ?? 0)) / 100
               : 0);
 
-          const itemGrossPrice = item?.salesRate * item?.quantity;
+          const itemGrossPrice = item?.unit_price * item?.quantity;
           const itemCashDiscount =
             (state.discountAmount / state.totalBill) * itemGrossPrice;
 
@@ -148,7 +148,6 @@ const billSlice = createSlice({
       balanceUpdater(state);
     },
     addItem: (state, { payload }) => {
-      console.log(payload, "in r");
       if (state.medicines) {
         state.medicines.push(payload);
       } else {

@@ -13,7 +13,7 @@ export interface ISaleFormData {
 }
 
 export const salesZodSchema = z.object({
-  name: z.string({ required_error: "Name Is Required" }),
+  name: z.string().optional(),
 
   address: z.string().optional(),
 
@@ -21,9 +21,9 @@ export const salesZodSchema = z.object({
 
   transaction_date: z.date().optional(),
 
-  paymentId: z.string(),
+  paymentId: z.string().optional(),
 
-  invoice_no: z.string(),
+  invoice_no: z.string().optional(),
 
   patient_type: z.enum(["outdoor", "indoor"]),
 

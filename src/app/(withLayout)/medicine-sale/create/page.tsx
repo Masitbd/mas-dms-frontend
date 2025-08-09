@@ -15,16 +15,13 @@ const page = () => {
   const [createMedicineSales, { isLoading, isSuccess }] =
     useCreateMedicineSalesMutation();
 
-  const submitHandler = async (
-    data: ISaleFormData,
-    reset: UseFormReset<ISaleFormData>
-  ) => {
+  const submitHandler = async (data: any, reset: UseFormReset<any>) => {
     try {
       const result = await createMedicineSales(data).unwrap();
       if (result?.success) {
         Toast.fire({ icon: "success", title: "Category Created" });
         reset();
-        router.push("/medicine-sales");
+        router.push("/medicine-sale");
       }
     } catch (error) {
       Toast.fire({ icon: "error", text: (error ?? "Try Again") as string });
