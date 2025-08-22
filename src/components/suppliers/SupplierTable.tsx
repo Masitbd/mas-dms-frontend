@@ -64,11 +64,9 @@ const SupplierTable = ({ data, isLoading }: ITableProps) => {
         <Column flexGrow={2}>
           <HeaderCell>Action</HeaderCell>
           <Cell>
-            {(rowData: ISupplierFormData) => (
+            {(rowData: ISupplierFormData & { _id: string }) => (
               <div className="flex gap-3 justify-center">
-                <Link
-                  href={`/supplier/${rowData.supplierId}?mode=${ENUM_MODE.VIEW}`}
-                >
+                <Link href={`/supplier/${rowData._id}?mode=${ENUM_MODE.VIEW}`}>
                   <Button appearance="primary" color="blue" size="xs">
                     <Eye className="w-4 h-4" />
                   </Button>

@@ -11,12 +11,19 @@ import {
   SelectPicker,
   InputNumber,
   Button,
+  SelectPickerProps,
+  InputNumberProps,
+  DatePickerProps,
 } from "rsuite";
 import { Rfield as Field } from "../ui/Rfield";
 import { Package, Calendar, DollarSign, Percent, Edit } from "lucide-react";
-import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
 import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
 import { useGetSuppliersQuery } from "@/redux/api/suppliers/supplier.api";
+import {
+  useGetSingleStockQuery,
+  useGetStocksQuery,
+} from "@/redux/api/stock/stock.api";
+import CurrentQuantityDisplay from "./Stock";
 
 export interface ItemDetailData {
   category: string;
@@ -46,27 +53,6 @@ interface ItemDetailsFormProps {
   editItem?: PurchaseDetailItem | null;
 }
 
-const categoryOptions = [
-  { label: "CAPSULE", value: "CAPSULE" },
-  { label: "Tablet", value: "Tablet" },
-  { label: "Capsule", value: "Capsule" },
-  { label: "Syrup", value: "Syrup" },
-  { label: "Injection", value: "Injection" },
-];
-
-const medicineOptions = [
-  { label: "Denvar 200", value: "Denvar 200" },
-  { label: "Sergel 20", value: "Sergel 20" },
-  { label: "Skilor 500", value: "Skilor 500" },
-  { label: "Bonviv", value: "Bonviv" },
-  { label: "Napyn 500", value: "Napyn 500" },
-  { label: "Abacal 5/20", value: "Abacal 5/20" },
-  { label: "CLONATHIL 0.5", value: "CLONATHIL 0.5" },
-  { label: "ROCIPRO 500", value: "ROCIPRO 500" },
-  { label: "Plenal-cs", value: "Plenal-cs" },
-  { label: "Lexoril 3mg Tab", value: "Lexoril 3mg Tab" },
-];
-
 export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
   open,
   onClose,
@@ -75,11 +61,6 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
   editItem,
 }) => {
   // Data source
-  const {
-    data: categoryData,
-    isLoading: categoryDataLoading,
-    isFetching: categoryDataFetching,
-  } = useGetCategoriesQuery({ limit: 10000 });
 
   const {
     data: medicineData,
@@ -127,6 +108,7 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
         dateMfg: new Date(editItem.dateMfg),
         vat: editItem.vat,
         discount: editItem.discount,
+        batchNo: editItem?.batchNo,
       });
     } else {
       reset({
@@ -143,7 +125,13 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
     }
   }, [editItem, reset]);
 
-  const watchedValues = watch(["quantity", "purchaseRate", "vat", "discount"]);
+  const watchedValues = watch([
+    "quantity",
+    "purchaseRate",
+    "vat",
+    "discount",
+    "medicineName",
+  ]);
 
   const onSubmit = (data: ItemDetailData) => {
     const baseAmount = data.quantity * data.purchaseRate;
@@ -173,6 +161,13 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
     onClose();
   };
 
+  const {
+    data: stockData,
+    isLoading: stockLoading,
+    isFetching: stockFetching,
+  } = useGetSingleStockQuery(watchedValues[4], {
+    skip: !watchedValues[4],
+  });
   return (
     <Modal open={open} onClose={handleClose} size="lg">
       <Modal.Header>
@@ -192,7 +187,7 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
       </Modal.Header>
 
       <Modal.Body className="">
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={(v) => handleSubmit(onSubmit)}>
           <Grid fluid className="overflow-x-hidden">
             <Row gutter={16} className="mb-4">
               <Col xs={12}>
@@ -204,17 +199,18 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                   control={control}
                   rules={{ required: "Supplier is required" }}
                   render={({ field }) => (
-                    <Field
+                    <Field<SelectPickerProps, ItemDetailData, "category">
                       as={SelectPicker}
                       field={field}
                       error={errors.category?.message}
-                      data={supplierData?.data?.map?.((d) => ({
+                      data={supplierData?.data?.map?.((d: any) => ({
                         label: d?.name,
                         value: d?._id,
                       }))}
                       placeholder="Select Supplier"
                       block
                       searchable={true}
+                      type="select"
                     />
                   )}
                 />
@@ -229,17 +225,18 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                   control={control}
                   rules={{ required: "Medicine name is required" }}
                   render={({ field }) => (
-                    <Field
+                    <Field<SelectPickerProps, ItemDetailData, "medicineName">
                       as={SelectPicker}
                       field={field}
                       error={errors.medicineName?.message}
-                      data={medicineData?.data?.data?.map?.((d) => ({
+                      data={medicineData?.data?.data?.map?.((d: any) => ({
                         label: d?.name,
                         value: d?._id,
                       }))}
                       placeholder="Select medicine"
                       block
                       searchable
+                      type="select"
                     />
                   )}
                 />
@@ -259,11 +256,12 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                     min: { value: 1, message: "Quantity must be at least 1" },
                   }}
                   render={({ field }) => (
-                    <Field
+                    <Field<InputNumberProps, ItemDetailData, "quantity">
                       as={InputNumber}
                       field={field}
                       error={errors.quantity?.message}
                       placeholder="0"
+                      type="number"
                       min={1}
                     />
                   )}
@@ -283,13 +281,14 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                     min: { value: 0.01, message: "Rate must be positive" },
                   }}
                   render={({ field }) => (
-                    <Field
+                    <Field<InputNumberProps, ItemDetailData, "purchaseRate">
                       as={InputNumber}
                       field={field}
                       error={errors.purchaseRate?.message}
                       placeholder="0.00"
                       prefix="৳"
                       step={0.01}
+                      type="number"
                     />
                   )}
                 />
@@ -307,13 +306,14 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                     min: { value: 0, message: "Rate must be positive" },
                   }}
                   render={({ field }) => (
-                    <Field
+                    <Field<InputNumberProps, ItemDetailData, "salesRate">
                       as={InputNumber}
                       field={field}
                       error={errors.salesRate?.message}
                       placeholder="0.00"
                       prefix="৳"
                       step={0.01}
+                      type="number"
                     />
                   )}
                 />
@@ -331,13 +331,15 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                   control={control}
                   rules={{ required: "Manufacturing date is required" }}
                   render={({ field }) => (
-                    <Field
+                    <Field<DatePickerProps, ItemDetailData, "dateMfg">
                       as={DatePicker}
                       field={field}
                       error={errors.dateMfg?.message}
                       placeholder="Select date"
-                      format="dd-MMM-yyyy"
+                      format="dd-mm-yyyy"
                       block
+                      type="date"
+                      oneTap
                     />
                   )}
                 />
@@ -353,13 +355,14 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                   control={control}
                   rules={{ required: "Expiry date is required" }}
                   render={({ field }) => (
-                    <Field
+                    <Field<DatePickerProps, ItemDetailData, "dateExpire">
                       as={DatePicker}
                       field={field}
                       error={errors.dateExpire?.message}
                       placeholder="Select date"
-                      format="dd-MMM-yyyy"
+                      format="dd-MM-yyyy"
                       block
+                      type="date"
                     />
                   )}
                 />
@@ -374,12 +377,12 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
                   control={control}
                   rules={{ required: "Batch No. is required" }}
                   render={({ field }) => (
-                    <Field
+                    <Field<InputNumberProps, ItemDetailData, "batchNo">
                       as={Input}
                       field={field}
                       error={errors.batchNo?.message}
                       placeholder="Batch No."
-                      block
+                      type="text"
                     />
                   )}
                 />
@@ -387,49 +390,55 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
             </Row>
 
             <Row gutter={16} className="mb-4">
-              <Col xs={12}>
+              <Col xs={8}>
                 <Form.ControlLabel className="flex items-center gap-1 font-medium text-gray-700 mb-2">
-                  <Percent className="w-4 h-4" />
-                  VAT (%)
+                  VAT (<Percent className="w-4 h-4" />)
                 </Form.ControlLabel>
                 <Controller
                   name="vat"
                   control={control}
                   render={({ field }) => (
-                    <Field
+                    <Field<InputNumberProps, ItemDetailData, "vat">
                       as={InputNumber}
                       field={field}
                       error={errors.vat?.message}
                       placeholder="0"
-                      suffix="%"
                       step={0.01}
                       max={100}
                       min={0}
+                      type="number"
                     />
                   )}
                 />
               </Col>
 
-              <Col xs={12}>
+              <Col xs={8}>
                 <Form.ControlLabel className="flex items-center gap-1 font-medium text-gray-700 mb-2">
-                  <Percent className="w-4 h-4" />
-                  Discount (%)
+                  Discount (<Percent className="w-4 h-4" />)
                 </Form.ControlLabel>
                 <Controller
                   name="discount"
                   control={control}
                   render={({ field }) => (
-                    <Field
+                    <Field<InputNumberProps, ItemDetailData, "discount">
                       as={InputNumber}
                       field={field}
                       error={errors.discount?.message}
                       placeholder="0"
-                      suffix="%"
                       step={0.01}
                       max={100}
                       min={0}
+                      type="number"
                     />
                   )}
+                />
+              </Col>
+
+              <Col xs={8}>
+                <CurrentQuantityDisplay
+                  batches={watchedValues[4] ? stockData?.data : undefined}
+                  label="Current Stock"
+                  loading={stockLoading || stockFetching}
                 />
               </Col>
             </Row>

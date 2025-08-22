@@ -20,5 +20,7 @@ export const baseApi = createApi({
     "medicine-sales",
     "single-medicine",
     "purchase-list",
+    "stock",
+    "single-stock",
   ],
 });

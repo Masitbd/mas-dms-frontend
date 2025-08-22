@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Table, Button, Tag, Panel, SelectPicker } from "rsuite";
 import { Plus, Package, Trash2, Edit, Pill } from "lucide-react";
-import { PurchaseDetailItem } from "../forms/ItemDetailsForm";
 import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
 import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
+import { PurchaseDetailItem } from "./ItemDetails";
 
 const { Column, HeaderCell, Cell } = Table;
 
@@ -111,7 +112,7 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({
             <Package className="w-12 h-12 mx-auto mb-3 text-gray-300" />
             <p className="text-lg font-medium">No items added yet</p>
             <p className="text-sm">
-              Click the "Add Item" button to add purchase details
+              Click the &quot;Add Item&quot; button to add purchase details
             </p>
           </div>
         ) : (
@@ -134,7 +135,7 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({
                     );
 
                     const category = categoryData?.data?.find(
-                      (d) => d?._id?.toString() == medicine?.category?._id
+                      (d: any) => d?._id?.toString() == medicine?.category?._id
                     );
                     console.log(categoryData);
                     return (

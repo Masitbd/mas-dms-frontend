@@ -8,7 +8,6 @@ const NewPurchase = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const mode = searchParams.get("mode");
-  console.log(id, mode);
   return (
     <div>
       <PurchaseInterface id={id ?? ""} mode={mode ?? ENUM_MODE.NEW} />

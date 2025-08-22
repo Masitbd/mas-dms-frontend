@@ -1,7 +1,6 @@
 "use client";
 import MedicineCategoryTable from "@/components/medicine-purchese/MedicinePurcheseTable";
 import MedicineHeader from "@/components/medicine-purchese/MedicinePurcheseHeader";
-import RPagination from "@/components/RPagination";
 import useQueryBuilder from "@/helpers/QueryBUilder";
 import React from "react";
 
@@ -10,17 +9,17 @@ const MedicineCategory = () => {
   return (
     <div>
       <div className="my-2">
-        <MedicineHeader />
+        <MedicineHeader
+          addField={addField}
+          query={query}
+          deleteField={deleteField}
+        />
       </div>
       <div>
-        <MedicineCategoryTable />
-      </div>
-      <div>
-        <RPagination
+        <MedicineCategoryTable
+          query={query}
           addField={addField}
           deleteField={deleteField}
-          query={query}
-          total={100}
         />
       </div>
     </div>

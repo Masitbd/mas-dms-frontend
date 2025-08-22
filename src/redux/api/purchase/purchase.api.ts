@@ -56,6 +56,14 @@ const purchaseApi = baseApi.injectEndpoints({
       }),
       providesTags: ["single-medicine"],
     }),
+
+    getPurchaseInvoice: build.query({
+      query: (id: string) => ({
+        url: `/purchases/purchase-invoice/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["single-medicine"],
+    }),
   }),
 });
 
@@ -66,4 +74,7 @@ export const {
   useGetSinglePurchasesQuery,
   useLazyGetSinglePurchasesQuery,
   useLazyGetPurchaseItemsForSinglePurchaseQuery,
+  useLazyGetPurchaseInvoiceQuery,
+  useGetPurchaseInvoiceQuery,
+  useUpdatePurchasesMutation,
 } = purchaseApi;

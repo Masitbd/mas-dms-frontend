@@ -11,16 +11,19 @@ import {
   InputNumber,
   Tag,
   SelectPickerProps,
+  InputProps,
+  DatePickerProps,
+  InputNumberProps,
 } from "rsuite";
 import { Rfield } from "../ui/Rfield";
 import { ShoppingCart, Calendar, User, Receipt } from "lucide-react";
 import { useGetSuppliersQuery } from "@/redux/api/suppliers/supplier.api";
 
 export interface PurchaseHeaderData {
-  challanNo: string;
-  supplierName: string;
+  invoiceNo: string;
+  supplierId: string;
   totalAmount: number;
-  totalPaid: number;
+  paidAmount: number;
   purchaseDate: Date;
   supplierBill: string;
 }
@@ -30,14 +33,6 @@ interface PurchaseHeaderFormProps {
   errors: FieldErrors<PurchaseHeaderData>;
   totalAmountReadOnly?: boolean;
 }
-
-const supplierOptions = [
-  { label: "ABC Suppliers Ltd.", value: "abc_suppliers" },
-  { label: "XYZ Trading Co.", value: "xyz_trading" },
-  { label: "Global Import Export", value: "global_import" },
-  { label: "Premier Wholesale", value: "premier_wholesale" },
-  { label: "Metro Suppliers", value: "metro_suppliers" },
-];
 
 export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
   control,
@@ -70,9 +65,9 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
             </p>
           </div>
         </div>
-        <Tag color="green" size="md">
+        {/* <Tag color="green" size="md">
           {getCurrentTime()}
-        </Tag>
+        </Tag> */}
       </div>
 
       <Grid fluid>
@@ -86,14 +81,13 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
               name="invoiceNo"
               control={control}
               render={({ field }) => (
-                <Rfield
+                <Rfield<InputProps, PurchaseHeaderData, "invoiceNo">
                   as={Input}
                   field={field}
-                  error={errors.challanNo?.message as string}
+                  error={errors.invoiceNo?.message as string}
                   size="md"
-                  fluid
                   disabled
-                  block
+                  type="text"
                 />
               )}
             />
@@ -108,11 +102,13 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
                 <Rfield<SelectPickerProps, PurchaseHeaderData, "supplierId">
                   as={SelectPicker}
                   field={field}
-                  error={errors.supplierName?.message as string}
-                  data={supplierData?.data?.map?.((d) => ({
-                    label: d?.name,
-                    value: d?._id,
-                  }))}
+                  error={errors.supplierId?.message as string}
+                  data={supplierData?.data?.map?.(
+                    (d: { name: string; _id: string }) => ({
+                      label: d?.name,
+                      value: d?._id,
+                    })
+                  )}
                   placeholder="Select supplier"
                   size="lg"
                   searchable={false}
@@ -139,15 +135,15 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
               control={control}
               rules={{ required: "Purchase date is required" }}
               render={({ field }) => (
-                <Rfield
+                <Rfield<DatePickerProps, PurchaseHeaderData, "purchaseDate">
                   as={DatePicker}
                   field={field}
                   error={errors.purchaseDate?.message}
                   placeholder="Select date"
                   size="md"
-                  format="dd MMM yyyy"
                   block
                   oneTap
+                  type={"date"}
                 />
               )}
             />
@@ -163,7 +159,7 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
               name="totalAmount"
               control={control}
               render={({ field }) => (
-                <Rfield
+                <Rfield<InputNumberProps, PurchaseHeaderData, "totalAmount">
                   as={InputNumber}
                   field={field}
                   error={errors.totalAmount?.message}
@@ -172,8 +168,8 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
                   prefix="৳"
                   step={0.01}
                   readOnly={totalAmountReadOnly}
-                  fluid
                   disabled
+                  type="number"
                 />
               )}
             />
@@ -184,18 +180,19 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
               Total Paid
             </Form.ControlLabel>
             <Controller
-              name="totalPaid"
+              name="paidAmount"
               control={control}
               rules={{ min: { value: 0, message: "Amount must be positive" } }}
               render={({ field }) => (
-                <Rfield
+                <Rfield<InputNumberProps, PurchaseHeaderData, "paidAmount">
                   as={InputNumber}
                   field={field}
-                  error={errors.totalPaid?.message}
+                  error={errors.paidAmount?.message}
                   placeholder="0.00"
                   size="md"
                   prefix="৳"
                   step={0.01}
+                  type="number"
                 />
               )}
             />
@@ -210,12 +207,13 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
               name="supplierBill"
               control={control}
               render={({ field }) => (
-                <Rfield
+                <Rfield<InputNumberProps, PurchaseHeaderData, "supplierBill">
                   as={Input}
                   field={field}
                   error={errors.supplierBill?.message}
                   placeholder="Enter bill reference"
                   size="md"
+                  type="text"
                 />
               )}
             />

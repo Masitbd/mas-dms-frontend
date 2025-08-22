@@ -1,8 +1,10 @@
-import { Printer, RefreshCw, Save, X } from "lucide-react";
+import { RefreshCw, Save, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { Button } from "rsuite";
 
 const Bottom = ({ watch }: { watch: (p: string) => number }) => {
+  const router = useRouter();
   return (
     <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
       <div className="mx-auto px-6 py-4">
@@ -47,17 +49,7 @@ const Bottom = ({ watch }: { watch: (p: string) => number }) => {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
-            <Button
-              appearance="subtle"
-              size="md"
-              startIcon={<Printer className="w-4 h-4" />}
-              // onClick={handlePrint}
-              className="border-gray-300 hover:border-gray-400"
-            >
-              Print
-            </Button>
-
-            <Button
+            {/* <Button
               appearance="subtle"
               size="md"
               startIcon={<RefreshCw className="w-4 h-4" />}
@@ -65,14 +57,15 @@ const Bottom = ({ watch }: { watch: (p: string) => number }) => {
               className="border-gray-300 hover:border-gray-400"
             >
               Reset
-            </Button>
+            </Button> */}
 
             <Button
               appearance="subtle"
               size="md"
               startIcon={<X className="w-4 h-4" />}
-              // onClick={handleCancel}
+              onClick={() => router.push("/medicine-purchase")}
               className="border-red-300 hover:border-red-400 text-red-600 hover:text-red-700"
+              color="red"
             >
               Cancel
             </Button>
