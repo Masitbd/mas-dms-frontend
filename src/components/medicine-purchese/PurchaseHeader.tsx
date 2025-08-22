@@ -83,7 +83,7 @@ export const PurchaseHeaderForm: React.FC<PurchaseHeaderFormProps> = ({
               Challan No
             </Form.ControlLabel>
             <Controller
-              name="challanNo"
+              name="invoiceNo"
               control={control}
               render={({ field }) => (
                 <Rfield

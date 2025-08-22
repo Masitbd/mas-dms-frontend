@@ -49,7 +49,21 @@ const purchaseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["purchase-list"],
     }),
+    getPurchaseItemsForSinglePurchase: build.query({
+      query: (id: string) => ({
+        url: `/purchase-items/single-purchase/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["single-medicine"],
+    }),
   }),
 });
 
-export const { useCreatePurchaseMutation, useGetPurchasesQuery } = purchaseApi;
+export const {
+  useCreatePurchaseMutation,
+  useGetPurchasesQuery,
+  useGetPurchasesQueryQuery,
+  useGetSinglePurchasesQuery,
+  useLazyGetSinglePurchasesQuery,
+  useLazyGetPurchaseItemsForSinglePurchaseQuery,
+} = purchaseApi;

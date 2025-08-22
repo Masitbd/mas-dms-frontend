@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ENUM_MODE } from "@/enums/EnumMode";
 import { useGetPurchasesQuery } from "@/redux/api/purchase/purchase.api";
+import { Edit } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
-import { Table } from "rsuite";
+import { Table, Button } from "rsuite";
 
 type IMedicineCategoryTableProps = {
   isLoading: boolean;
@@ -9,9 +12,10 @@ type IMedicineCategoryTableProps = {
 };
 const MedicineCategoryTable = () => {
   const { Cell, Column, ColumnGroup, HeaderCell } = Table;
+  const router = useRouter();
 
   const { data: purchaseData } = useGetPurchasesQuery({ limit: 1000 });
-  console.log(purchaseData);
+
   return (
     <div>
       <Table data={purchaseData?.data} autoHeight>
@@ -30,6 +34,26 @@ const MedicineCategoryTable = () => {
         <Column flexGrow={1.5}>
           <HeaderCell>Paid Amount</HeaderCell>
           <Cell dataKey="paidAmount" />
+        </Column>
+        <Column flexGrow={1.5}>
+          <HeaderCell>Action</HeaderCell>
+          <Cell>
+            {(rowData) => {
+              return (
+                <Button
+                  appearance="link"
+                  size="lg"
+                  onClick={() =>
+                    router.push(
+                      `/medicine-purchase/new?mode=${ENUM_MODE.UPDATE}&id=${rowData?._id}`
+                    )
+                  }
+                  startIcon={<Edit className="w-3 h-3" />}
+                  color="blue"
+                />
+              );
+            }}
+          </Cell>
         </Column>
       </Table>
     </div>

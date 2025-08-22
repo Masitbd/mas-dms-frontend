@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { Table, Button, Tag, Panel } from "rsuite";
-import { Plus, Package, Trash2, Edit } from "lucide-react";
+import { Table, Button, Tag, Panel, SelectPicker } from "rsuite";
+import { Plus, Package, Trash2, Edit, Pill } from "lucide-react";
 import { PurchaseDetailItem } from "../forms/ItemDetailsForm";
+import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
+import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
 
 const { Column, HeaderCell, Cell } = Table;
 
@@ -18,6 +21,10 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({
   onEditItem,
   onDeleteItem,
 }) => {
+  const { data: medicineData } = useGetMedicinesQuery({
+    limit: 1000 as unknown as string,
+  });
+  const { data: categoryData } = useGetCategoriesQuery({ limit: 1000 });
   const formatDate = (date: Date | string | null | undefined) => {
     if (!date) return "N/A";
 
@@ -113,7 +120,7 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({
               data={items}
               autoHeight
               className="w-full"
-              rowHeight={40}
+              rowHeight={50}
               headerHeight={45}
             >
               <Column flexGrow={0.5} align="center" fixed>
@@ -121,11 +128,21 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({
                   Category
                 </HeaderCell>
                 <Cell dataKey="category">
-                  {(rowData: PurchaseDetailItem) => (
-                    <Tag color="blue" size="sm">
-                      {rowData.category || "N/A"}
-                    </Tag>
-                  )}
+                  {(rowData: PurchaseDetailItem) => {
+                    const medicine = medicineData?.data?.data?.find(
+                      (d: any) => d?._id == rowData?.medicineName
+                    );
+
+                    const category = categoryData?.data?.find(
+                      (d) => d?._id?.toString() == medicine?.category?._id
+                    );
+                    console.log(categoryData);
+                    return (
+                      <Tag color="blue" size="md" className="font-bold">
+                        {category?.name || "N/A"}
+                      </Tag>
+                    );
+                  }}
                 </Cell>
               </Column>
 
@@ -133,10 +150,24 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({
                 <HeaderCell className="font-semibold bg-gray-50">
                   Medicine Name
                 </HeaderCell>
-                <Cell dataKey="medicineName" className="font-medium" />
+                <Cell>
+                  {(rowData) => {
+                    const data = medicineData?.data?.data?.find(
+                      (d: any) => d?._id == rowData?.medicineName
+                    );
+
+                    return <>{data?.name}</>;
+                  }}
+                </Cell>
+              </Column>
+              <Column align="center" width={100}>
+                <HeaderCell className="font-semibold bg-gray-50">
+                  Batch No.
+                </HeaderCell>
+                <Cell dataKey="batchNo" />
               </Column>
 
-              <Column align="center">
+              <Column align="center" width={100}>
                 <HeaderCell className="font-semibold bg-gray-50">
                   Qty
                 </HeaderCell>
@@ -161,7 +192,9 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({
                 <Cell>
                   {(rowData: PurchaseDetailItem) => (
                     <span className="font-semibold text-green-600">
-                      {formatCurrency(rowData.amount)}
+                      {formatCurrency(
+                        (rowData?.quantity ?? 0) * (rowData?.purchaseRate ?? 0)
+                      )}
                     </span>
                   )}
                 </Cell>
@@ -231,32 +264,6 @@ export const ItemsTable: React.FC<ItemsTableProps> = ({
                         : parseFloat(rowData.discount as string) || 0;
                     return `${discount}%`;
                   }}
-                </Cell>
-              </Column>
-
-              <Column width={100} align="right">
-                <HeaderCell className="font-semibold bg-gray-50">
-                  Balance
-                </HeaderCell>
-                <Cell>
-                  {(rowData: PurchaseDetailItem) => (
-                    <span className="font-semibold text-blue-600">
-                      {formatCurrency(rowData.balance)}
-                    </span>
-                  )}
-                </Cell>
-              </Column>
-
-              <Column width={80} align="center">
-                <HeaderCell className="font-semibold bg-gray-50">
-                  Status
-                </HeaderCell>
-                <Cell>
-                  {(rowData: PurchaseDetailItem) => (
-                    <Tag color="green" size="sm">
-                      {rowData.posted || "N/A"}
-                    </Tag>
-                  )}
                 </Cell>
               </Column>
 

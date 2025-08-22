@@ -6,3 +6,18 @@ export const medicinePurchaseSchema = yup
     age: yup.number().positive().integer().required(),
   })
   .required();
+
+import { useEffect, useRef } from "react";
+
+export function useValueChange(newValue: any, callback: any) {
+  const prevValue = useRef(newValue);
+  useEffect(() => {
+    if (
+      prevValue.current[1] !== newValue[1] ||
+      prevValue.current[2] !== newValue[2]
+    ) {
+      callback();
+      prevValue.current = newValue;
+    }
+  }, [newValue]);
+}
