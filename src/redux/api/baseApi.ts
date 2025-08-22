@@ -17,6 +17,7 @@ export const baseApi = createApi({
     "generic-list",
     "single-generic",
     "medicine-list",
+    "medicine-sales",
     "single-medicine",
     "purchase-list",
   ],

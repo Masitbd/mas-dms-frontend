@@ -12,7 +12,7 @@ const medicineApi = baseApi.injectEndpoints({
       invalidatesTags: ["medicine-list"],
     }),
     getMedicines: build.query({
-      query: (query: Record<string, string>) => ({
+      query: (query) => ({
         url: "/medicines",
         method: "GET",
         params: query,
