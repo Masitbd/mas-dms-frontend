@@ -229,18 +229,34 @@ const billSlice = createSlice({
         }
       }
     },
+    // setItemDiscount: (state, { payload }) => {
+    //   console.log(payload, "payload in discount");
+    //   if (state?.medicines?.length) {
+    //     const index = state.medicines.findIndex(
+    //       (item) => item?._id == payload?.item?._id
+    //     );
+    //     if (index !== -1) {
+    //       state.medicines[index].discount = payload?.discount;
+    //     }
+    //   }
+    //   balanceUpdater(state);
+    // },
+
     setItemDiscount: (state, { payload }) => {
-      console.log(payload, "payload in discount");
       if (state?.medicines?.length) {
-        const index = state.medicines.findIndex(
-          (item) => item?._id == payload?.item?._id
+        const foundItem = state.medicines.find(
+          (item) => String(item?.medicineId) === String(payload?.item) // Use medicineId instead of _id
         );
-        if (index !== -1) {
-          state.medicines[index].discount = payload?.discount;
+
+        if (foundItem) {
+          foundItem.discount = payload?.discount;
+        } else {
+          console.error("Medicine not found. Looking for:", payload?.item);
         }
       }
       balanceUpdater(state);
     },
+
     resetBill: () => initialState,
   },
 });
