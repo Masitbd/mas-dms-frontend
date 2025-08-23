@@ -228,6 +228,7 @@ const billSlice = createSlice({
       }
     },
     setItemDiscount: (state, { payload }) => {
+      console.log(payload, "payload in discount");
       if (state?.medicines?.length) {
         const index = state.medicines.findIndex(
           (item) => item?._id == payload?.item?._id

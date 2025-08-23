@@ -471,13 +471,13 @@ const MedicienSalesForm = ({
                           onChange={(v) =>
                             dispatch(
                               setItemDiscount({
-                                item: rowData?.item,
+                                item: rowData?.item?._id,
                                 discount: Number(v),
                               })
                             )
                           }
-                          value={rowData?.discount}
-                          disabled
+                          defaultValue={rowData?.discount}
+                          // disabled
                         />
                       </>
                     );
