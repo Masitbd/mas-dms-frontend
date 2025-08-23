@@ -117,7 +117,9 @@ const balanceUpdater = (state: IOrder) => {
 
     state.netPayable = state.totalBill + state.totalVat - state.totalDiscount;
 
-    state.due = state.netPayable - (state.paid ?? 0) - (state?.pPayment ?? 0);
+    state.due = parseFloat(
+      (state.netPayable - (state.paid ?? 0) - (state?.pPayment ?? 0)).toFixed(2)
+    );
   }
 };
 

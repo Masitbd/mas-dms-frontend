@@ -600,6 +600,9 @@ const MedicienSalesForm = ({
                       <Controller
                         name="method"
                         control={control}
+                        rules={{
+                          required: "Payment method is required",
+                        }}
                         render={({ field }) => (
                           <Rfield<any, ISaleFormData, "method">
                             as={SelectPicker}
@@ -612,6 +615,7 @@ const MedicienSalesForm = ({
                           />
                         )}
                       />
+                      
                     </div>
                   </div>
 
