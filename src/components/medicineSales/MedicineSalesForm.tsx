@@ -455,7 +455,7 @@ const MedicienSalesForm = ({
               </Column>
               <Column flexGrow={0.7}>
                 <HeaderCell children="Rate" />
-                <Cell dataKey="salesRate" />
+                <Cell dataKey="unit_price" />
               </Column>
               <Column flexGrow={0.7}>
                 <HeaderCell children="Disc(%)" />
