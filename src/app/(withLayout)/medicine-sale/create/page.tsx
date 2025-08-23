@@ -20,7 +20,7 @@ const page = () => {
     try {
       const result = await createMedicineSales(data).unwrap();
       if (result?.success) {
-        Toast.fire({ icon: "success", title: "Category Created" });
+        Toast.fire({ icon: "success", title: "Sold Successfuly" });
         resetBill();
         reset();
         router.push("/medicine-sale");

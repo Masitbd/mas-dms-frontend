@@ -131,7 +131,7 @@ const MedicienSalesForm = ({
         bed_no: data.bed_no,
         indoor_bill_no: data.indoor_bill_no,
         transaction_date: data.transaction_date,
-        method: state.method,
+        method: data.method,
         due: state.due,
         totalBill: state.totalBill,
         totalDiscount: state.totalDiscount,
@@ -595,17 +595,24 @@ const MedicienSalesForm = ({
 
                 <div className="col-span-3 grid grid-cols-1 gap-2">
                   <div className="grid grid-cols-3">
-                    <label htmlFor="">Payment Mode</label>
-                    <InputPicker
-                      size="sm"
-                      className="col-span-2"
-                      data={paymentMethod}
-                      onSelect={(v) =>
-                        dispatch(updateBillDetails({ paymentMode: v }))
-                      }
-                      placement="top"
-                      value={state.method}
-                    />
+                    <label htmlFor="">P.Method</label>
+                    <div className="col-span-2">
+                      <Controller
+                        name="method"
+                        control={control}
+                        render={({ field }) => (
+                          <Rfield<any, ISaleFormData, "method">
+                            as={SelectPicker}
+                            field={field}
+                            error={errors.method?.message as string}
+                            data={paymentMethod}
+                            block
+                            searchable
+                            disabled={mode === ENUM_MODE.VIEW}
+                          />
+                        )}
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-3">

@@ -21,7 +21,19 @@ const MedicineSalesTable = ({ data, isLoading }: ICategoryTableProps) => {
         </Column>
         <Column flexGrow={2}>
           <HeaderCell>Total Amount</HeaderCell>
-          <Cell dataKey="paymentId.amount" />
+          <Cell dataKey="paymentId.totalBill" />
+        </Column>
+        <Column flexGrow={2}>
+          <HeaderCell>Total Dis</HeaderCell>
+          <Cell dataKey="paymentId.totalDiscount" />
+        </Column>
+        <Column flexGrow={2}>
+          <HeaderCell>Payable</HeaderCell>
+          <Cell dataKey="paymentId.netPayable" />
+        </Column>
+        <Column flexGrow={2}>
+          <HeaderCell>Due</HeaderCell>
+          <Cell dataKey="paymentId.due" />
         </Column>
         <Column flexGrow={2}>
           <HeaderCell>Posted By</HeaderCell>
