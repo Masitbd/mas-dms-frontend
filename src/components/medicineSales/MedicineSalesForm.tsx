@@ -88,7 +88,7 @@ const MedicienSalesForm = ({
   const routes = useRouter();
   const cancelHandler = () => {
     reset({ name: "", address: "" });
-    routes.push("/category");
+    routes.push("/medicine-sale");
   };
 
   const queryParams: Record<string, any> = {};
