@@ -38,6 +38,7 @@ export interface IOrder {
   due: number;
   pPayment?: number;
   paid: number;
+  method: string;
 }
 
 export type IUnregisteredCustomerInfo = {
@@ -136,6 +137,7 @@ const initialState: IOrder = {
   netPayable: 0,
   due: 0,
   paid: 0,
+  method: "",
 };
 
 const billSlice = createSlice({

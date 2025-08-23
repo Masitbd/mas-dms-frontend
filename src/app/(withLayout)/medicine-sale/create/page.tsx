@@ -1,11 +1,11 @@
 "use client";
 
-
 import MedicienSalesForm from "@/components/medicineSales/MedicineSalesForm";
 
 import { Toast } from "@/components/ui/Toast";
 import { ENUM_MODE } from "@/enums/EnumMode";
 import { useCreateMedicineSalesMutation } from "@/redux/api/medicines/sales.api";
+import { resetBill } from "@/redux/order/orderSlice";
 import { SquarePercent } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { UseFormReset } from "react-hook-form";
@@ -21,6 +21,7 @@ const page = () => {
       const result = await createMedicineSales(data).unwrap();
       if (result?.success) {
         Toast.fire({ icon: "success", title: "Category Created" });
+        resetBill();
         reset();
         router.push("/medicine-sale");
       }
@@ -56,7 +57,6 @@ const page = () => {
           mode={ENUM_MODE.NEW}
         />
       </div>
-     
     </div>
   );
 };
