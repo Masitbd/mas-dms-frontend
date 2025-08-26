@@ -8,6 +8,14 @@ import { useState } from "react";
 import { Button, Input, InputGroup } from "rsuite";
 import { useDebouncedCallback } from "use-debounce";
 const MedicineSales = () => {
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+
+  const handleChangeLimit = (dataKey: number) => {
+    setPage(1);
+    setLimit(dataKey);
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleDebounce = useDebouncedCallback((value: string) => {
@@ -46,6 +54,11 @@ const MedicineSales = () => {
         <MedicineSalesTable
           data={salesData?.data?.result}
           isLoading={isLoading}
+          total={salesData?.data?.meta?.total}
+          limit={limit}
+          page={page}
+          setPage={setPage}
+          handleChangeLimit={handleChangeLimit}
         />
       </div>
     </div>

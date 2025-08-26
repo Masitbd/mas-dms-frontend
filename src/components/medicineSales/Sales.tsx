@@ -4,14 +4,27 @@ import { useDeleteMedicineSalesMutation } from "@/redux/api/medicines/sales.api"
 import { Eye, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { Button, ButtonToolbar, Message, Table } from "rsuite";
+import { Button, ButtonToolbar, Message, Pagination, Table } from "rsuite";
 import Swal from "sweetalert2";
 
 type ICategoryTableProps = {
   isLoading: boolean;
   data: any[];
+  total: number;
+  limit: number;
+  page: number;
+  setPage: (page: number) => void;
+  handleChangeLimit: (dataKey: number) => void;
 };
-const MedicineSalesTable = ({ data, isLoading }: ICategoryTableProps) => {
+const MedicineSalesTable = ({
+  data,
+  isLoading,
+  limit,
+  page,
+  setPage,
+  total,
+  handleChangeLimit,
+}: ICategoryTableProps) => {
   const { Cell, Column, HeaderCell } = Table;
 
   const [deleteItem, { isLoading: isDeleting }] =
@@ -114,6 +127,25 @@ const MedicineSalesTable = ({ data, isLoading }: ICategoryTableProps) => {
           </Cell>
         </Column>
       </Table>
+      <div style={{ padding: 20 }}>
+        <Pagination
+          prev
+          next
+          first
+          last
+          ellipsis
+          boundaryLinks
+          maxButtons={5}
+          size="xs"
+          layout={["total", "-", "limit", "|", "pager", "skip"]}
+          total={total}
+          limitOptions={[10, 30, 50]}
+          limit={limit}
+          activePage={page}
+          onChangePage={setPage}
+          onChangeLimit={handleChangeLimit}
+        />
+      </div>
     </div>
   );
 };
