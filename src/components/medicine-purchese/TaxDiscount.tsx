@@ -49,6 +49,7 @@ export const TaxDiscountForm: React.FC<TaxDiscountFormProps> = ({
               render={({ field }) => (
                 <Rfield
                   as={InputNumber}
+                  //@ts-ignore
                   field={field}
                   error={errors.vatPercentage?.message}
                   placeholder="0"
