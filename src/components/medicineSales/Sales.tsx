@@ -103,7 +103,9 @@ const MedicineSalesTable = ({
           <Cell>
             {(rowData) => (
               <div className="flex gap-3 justify-center">
-                <Link href={`/category/${rowData._id}?mode=${ENUM_MODE.VIEW}`}>
+                <Link
+                  href={`/medicine-sale/${rowData._id}?mode=${ENUM_MODE.VIEW}`}
+                >
                   <Button appearance="primary" color="blue" size="xs">
                     <Eye className="w-4 h-4" />
                   </Button>
