@@ -142,134 +142,123 @@ const SalesInvoice = ({ item }: { item: any }) => {
             },
             margin: [0, 2],
           },
-          //   {
-          //     columns: [
-          //       {
-          //         stack: [
-          //           {
-          //             text: [{ text: "Total Amount: " }],
-          //             style: "infoText",
-          //           },
-          //           {
-          //             text: [{ text: "Total Discount: " }],
-          //             style: "infoText",
-          //           },
-          //           {
-          //             text: [{ text: "Extra Discount: " }],
-          //             style: "infoText",
-          //           },
-          //           {
-          //             text: [{ text: "Advance Amount: " }],
-          //             style: "infoText",
-          //           },
-          //           {
-          //             text: [{ text: "Amount Paid: " }],
-          //             style: "infoText",
-          //           },
-          //         ],
-          //         width: "50%",
-          //         alignment: "right",
-          //       },
-          //       {
-          //         stack: [
-          //           {
-          //             text: [{ text: item?.paymentId?.totalBill, bold: true }],
-          //             style: "infoText",
-          //           },
-          //           {
-          //             text: [{ text: item?.paymentId?.totalDiscount }],
-          //             style: "infoText",
-          //           },
-          //           {
-          //             text: [{ text: item?.paymentId?.extraDiscount ?? 0 }],
-          //             style: "infoText",
-          //           },
-          //           {
-          //             text: [{ text: item?.paymentId?.advanceAmount }],
-          //             style: "infoText",
-          //           },
-          //           {
-          //             text: [{ text: item?.paymentId?.paid }],
-          //             style: "infoText",
-          //           },
-          //         ],
-          //         width: "40%",
-          //         alignment: "right",
-          //       },
-          //     ],
-          //   },
-          //   {
-          //     table: {
-          //       widths: ["*"],
-          //       body: [
-          //         [
-          //           {
-          //             text: "",
-          //             border: [false, false, false, true],
-          //             style: { alignment: "center", fontSize: 10, bold: "true" },
-          //           },
-          //         ],
-          //       ],
-          //     },
-          //     margin: [0, 2],
-          //   },
-          //   {
-          //     columns: [
-          //       {
-          //         stack: [
-          //           {
-          //             text: [{ text: "Total Due: " }],
-          //             style: "infoText",
-          //           },
-          //         ],
-          //         width: "50%",
-          //         alignment: "right",
-          //       },
-          //       {
-          //         stack: [
-          //           {
-          //             text: [{ text: item?.paymentId?.due, bold: true }],
-          //             style: "infoText",
-          //           },
-          //         ],
-          //         width: "40%",
-          //         alignment: "right",
-          //       },
-          //     ],
-          //   },
+          {
+            columns: [
+              {
+                stack: [
+                  {
+                    text: [{ text: "Total Amount: " }],
+                    style: "infoText",
+                  },
+                  {
+                    text: [{ text: "Total Discount: " }],
+                    style: "infoText",
+                  },
+                  {
+                    text: [{ text: "Extra Discount: " }],
+                    style: "infoText",
+                  },
+                  {
+                    text: [{ text: "Advance Amount: " }],
+                    style: "infoText",
+                  },
+                  {
+                    text: [{ text: "Amount Paid: " }],
+                    style: "infoText",
+                  },
+                ],
+                width: "50%",
+                alignment: "right",
+              },
+              {
+                stack: [
+                  {
+                    text: [{ text: item?.paymentId?.totalBill, bold: true }],
+                    style: "infoText",
+                  },
+                  {
+                    text: [{ text: item?.paymentId?.totalDiscount }],
+                    style: "infoText",
+                  },
+                  {
+                    text: [{ text: item?.paymentId?.extraDiscount ?? 0 }],
+                    style: "infoText",
+                  },
+                  {
+                    text: [{ text: item?.paymentId?.advanceAmount ?? 0 }],
+                    style: "infoText",
+                  },
+                  {
+                    text: [{ text: item?.paymentId?.paid ?? 0 }],
+                    style: "infoText",
+                  },
+                ],
+                width: "40%",
+                alignment: "right",
+              },
+            ],
+          },
+          {
+            table: {
+              widths: ["*"],
+              body: [
+                [
+                  {
+                    text: "",
+                    border: [false, false, false, true],
+                    style: { alignment: "center", fontSize: 10, bold: "true" },
+                  },
+                ],
+              ],
+            },
+            margin: [0, 2],
+          },
+          {
+            columns: [
+              {
+                stack: [
+                  {
+                    text: [{ text: "Total Due: " }],
+                    style: "infoText",
+                  },
+                ],
+                width: "50%",
+                alignment: "right",
+              },
+              {
+                stack: [
+                  {
+                    text: [{ text: item?.paymentId?.due ?? 0, bold: true }],
+                    style: "infoText",
+                  },
+                ],
+                width: "40%",
+                alignment: "right",
+              },
+            ],
+          },
 
-          //   {
-          //     table: {
-          //       widths: ["*"],
-          //       heights: [1],
-          //       body: [
-          //         [
-          //           {
-          //             text: "ক্যাশ মেমো ছাড়া বিক্রিত ঔষধ ফেরত নেওয়া হয়না  ",
-          //             border: [false, false, false, false],
-          //             fillColor: "#eeeeee",
-          //             style: { alignment: "center", fontSize: 9, bold: "true" },
-          //           },
-          //           {
-          //             text: "ঔষধের মেয়াদ উত্তীর্ণ তারিখ থাকলে ৩০ দিনের মধ্যে ফেরত নেওয়া হয়। ",
-          //             border: [false, false, false, false],
-          //             fillColor: "#eeeeee",
-          //             style: { alignment: "center", fontSize: 9, bold: "true" },
-          //           },
-          //         ],
-          //       ],
-          //     },
-          //     margin: [0, 2],
-          //   },
+          {
+            text: "Return isn't acceptable without Cash Memo ",
+            border: [false, false, false, false],
+            fillColor: "#eeeeee",
+            style: { alignment: "center", fontSize: 9 },
+          },
+          {
+            text: "Return only acceptable within the expire date and 30 days",
+            border: [false, false, false, false],
+            fillColor: "#eeeeee",
+            style: { alignment: "center", fontSize: 9 },
+          },
 
-          //   {
-          //     text: "Developed By Mass It  Sollutions",
-          //     style: {
-          //       fontSize: 7,
-          //       bold: true,
-          //       alignment: "center",
-          //     },
-          //   },
+          {
+            text: "Developed By Mass It  Sollutions",
+            style: {
+              fontSize: 7,
+              bold: true,
+              alignment: "center",
+            },
+          },
         ],
         styles: {
           infoText: { fontSize: 8, margin: [0, 1, 0, 1] }, // Smaller font and tighter spacing
