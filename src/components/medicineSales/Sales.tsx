@@ -6,6 +6,7 @@ import Link from "next/link";
 import React from "react";
 import { Button, ButtonToolbar, Message, Pagination, Table } from "rsuite";
 import Swal from "sweetalert2";
+import SalesInvoice from "./SalesInvoice";
 
 type ICategoryTableProps = {
   isLoading: boolean;
@@ -115,6 +116,7 @@ const MedicineSalesTable = ({
                     <Pencil size={15} />
                   </Button>
                 </Link>
+                <SalesInvoice item={rowData} />
 
                 <Button
                   onClick={() => handleDelete(rowData._id)}

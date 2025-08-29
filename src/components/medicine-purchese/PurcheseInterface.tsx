@@ -55,7 +55,18 @@ export const PurchaseInterface = ({
     }
 
     if (totalAmount && discountPercentage) {
-      const discountAmount = (totalAmount * discountPercentage) / 100;
+      let totalAmountWithDiscount = 0;
+
+      const totalAmountWithoutDiscount = purchaseItems?.reduce((a, b) => {
+        if (!b.discount) {
+          return a + b.amount;
+        } else {
+          return 0;
+        }
+      }, 0);
+
+      const discountAmount =
+        (totalAmountWithoutDiscount * discountPercentage) / 100;
       setValue("discountAmount", Number(discountAmount.toFixed(2)));
     }
   };
@@ -198,7 +209,6 @@ export const PurchaseInterface = ({
 
           if (items?.data) {
             setPurchaseItems(items?.data);
-            console.log(items?.data);
           }
         }
       })();
