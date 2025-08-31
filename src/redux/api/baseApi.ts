@@ -22,5 +22,6 @@ export const baseApi = createApi({
     "purchase-list",
     "stock",
     "single-stock",
+    "reports",
   ],
 });
