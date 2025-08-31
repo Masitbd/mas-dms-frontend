@@ -134,22 +134,39 @@ const PatientDueReportsTable: React.FC<TDailySalesSummery> = ({
         },
 
         // Total Summary
-        // {
-        //   table: {
-        //     widths: [80, "*", 60, 60, 60, 60, 60, 60],
-        //     body: [
-        //       [
-        //         { text: "Total  Amount", bold: true, alignment: "center" },
-        //         data?.totalBill,
-        //         data?.totalDiscount,
-        //         data?.totalNetPayable,
-        //         data?.totalPaid,
-        //         data?.totalDue,
-        //       ].map((text) => ({ text, alignment: "center" })),
-        //     ],
-        //   },
-        //   margin: [0, 10, 0, 0],
-        // },
+        {
+          table: {
+            widths: ["*", "*", "*", "*", "*", "*", "*", "*"], // 8 columns
+            body: [
+              [
+                { text: "Total Amount", bold: true, alignment: "center" }, // col 1
+                { text: " ", alignment: "center" }, // col 2
+                {
+                  text: data?.totalBill?.toFixed(2) || "0.00",
+                  alignment: "center",
+                }, // col 3
+                {
+                  text: data?.totalDiscount?.toFixed(2) || "0.00",
+                  alignment: "center",
+                }, // col 4
+                {
+                  text: data?.totalNetPayable?.toFixed(2) || "0.00",
+                  alignment: "center",
+                }, // col 5
+                {
+                  text: data?.totalPaid?.toFixed(2) || "0.00",
+                  alignment: "center",
+                }, // col 6
+                {
+                  text: data?.totalDue?.toFixed(2) || "0.00",
+                  alignment: "center",
+                }, // col 7
+                { text: " ", alignment: "center" }, // col 8
+              ],
+            ],
+          },
+          margin: [0, 10, 0, 0],
+        },
 
         // Payment Mode Summary
       ],
