@@ -1,31 +1,14 @@
 "use client";
 import React from "react";
 import { Dropdown, Nav, Sidebar, Sidenav } from "rsuite";
-import Dashboard from "@rsuite/icons/legacy/Dashboard";
-
-import AdminIcon from "@rsuite/icons/Admin";
-import GearCircle from "@rsuite/icons/legacy/GearCircle";
-import TableIcon from "@rsuite/icons/Table";
-import PeoplesIcon from "@rsuite/icons/Peoples";
-
-import ListIcon from "@rsuite/icons/List";
-import SettingIcon from "@rsuite/icons/Setting";
-import PeopleBranchIcon from "@rsuite/icons/PeopleBranch";
 
 import NavToggle from "./NavToggle";
 import { NavLink } from "./Navlink";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { config, IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faCalculator } from "@fortawesome/free-solid-svg-icons";
-import StorageIcon from "@rsuite/icons/Storage";
-import FunnelTimeIcon from "@rsuite/icons/FunnelTime";
-import DocPassIcon from "@rsuite/icons/DocPass";
 
 import DateTaskIcon from "@rsuite/icons/DateTask";
 import { useRouter } from "next/navigation";
-import UserInfoIcon from "@rsuite/icons/UserInfo";
+
 import { useSession } from "next-auth/react";
-import { ENUM_USER } from "@/enums/EnumUser";
 
 const DashSidebar = () => {
   const navigate = useRouter();
@@ -84,88 +67,34 @@ const DashSidebar = () => {
               >
                 <Nav.Item
                   eventKey="9-1"
-                  href="/reports/daily-sales-report"
+                  href="/reports/medicine-sales"
                   as={NavLink}
                 >
-                  Daily Sales Reports
+                  Medicine Sales Reports
                 </Nav.Item>
                 <Nav.Item
                   eventKey="9-2"
-                  href="/reports/daily-sales-summery"
+                  href="/reports/due-collection"
                   as={NavLink}
                 >
-                  Daily Sales Summery
+                  Due Collection Statement
                 </Nav.Item>
                 {/*  */}
                 <Nav.Item
                   eventKey="9-3"
-                  href="/reports/menu-items"
+                  href="/reports/due-collection-summary"
                   as={NavLink}
                 >
-                  Menu Items
+                  Due Collection Summary
                 </Nav.Item>
                 <Nav.Item
                   eventKey="9-4"
-                  href="/reports/item-wise-sales"
+                  href="/reports/patient-due"
                   as={NavLink}
                 >
-                  Item Wise Sales Statement
+                  Patient Due Statement
                 </Nav.Item>
-                {/*  */}
-                <Nav.Item
-                  eventKey="8-5"
-                  href="/reports/menu-item-consumption"
-                  as={NavLink}
-                >
-                  Menu Item Conssumption
-                </Nav.Item>
-                {/*  */}
-                <Nav.Item
-                  eventKey="8-6"
-                  href="/reports/menu-item-costing"
-                  as={NavLink}
-                >
-                  Menu Item Costing
-                </Nav.Item>
-                <Nav.Item
-                  eventKey="8-7"
-                  href="/reports/raw-material-consumption"
-                  as={NavLink}
-                >
-                  Raw Material Consumption
-                </Nav.Item>
-                {/*  */}
-                <Nav.Item
-                  eventKey="8-8"
-                  href="/reports/item-wise-raw-material-consumption"
-                  as={NavLink}
-                >
-                  Item wise Raw Material Consumption
-                </Nav.Item>
-                {/*  */}
-                <Nav.Item
-                  eventKey="8-0"
-                  href="/reports/due-sales-statement"
-                  as={NavLink}
-                >
-                  Due Sales Statement
-                </Nav.Item>
-                {/*  */}
-                <Nav.Item
-                  eventKey="10"
-                  href="/reports/waiter-wise-sales"
-                  as={NavLink}
-                >
-                  Waiter wise Sales
-                </Nav.Item>
-                {/*  */}
-                <Nav.Item
-                  eventKey="10-1"
-                  href="/reports/waiter-wise-sales-details"
-                  as={NavLink}
-                >
-                  Waiter wise Sales Details
-                </Nav.Item>
+
                 {/*  */}
               </Nav.Menu>
             </Nav>
