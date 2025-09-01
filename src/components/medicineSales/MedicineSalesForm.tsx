@@ -595,6 +595,21 @@ const MedicienSalesForm = ({
 
                 <div className="col-span-3 grid grid-cols-1 gap-2">
                   <div className="grid grid-cols-3">
+                    <label htmlFor="">Extra Discount</label>
+                    <Input
+                      size="sm"
+                      className="col-span-2"
+                      onChange={(v) =>
+                        dispatch(
+                          updateBillDetails({ extra_discount: Number(v) })
+                        )
+                      }
+                      type="number"
+                      // value={state.paid}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3">
                     <label htmlFor="">P.Method</label>
                     <div className="col-span-2">
                       <Controller
@@ -615,7 +630,6 @@ const MedicienSalesForm = ({
                           />
                         )}
                       />
-                      
                     </div>
                   </div>
 

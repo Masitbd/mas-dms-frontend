@@ -38,6 +38,7 @@ export interface IOrder {
   due: number;
   pPayment?: number;
   paid: number;
+  extra_discount: number;
   method: string;
 }
 
@@ -76,16 +77,14 @@ const balanceUpdater = (state: IOrder) => {
     state.totalDiscount = parseFloat(
       (
         state.medicines.reduce((total, item) => {
-          const itemDiscount =
-            item.unit_price *
-            item.quantity *
-            (item.discount
-              ? (Number(item.discount) || Number(state.percentDiscount)) / 100
-              : 0);
-
+          const discountRate =
+            (item.discount ?? state.percentDiscount ?? 0) / 100;
+          const itemDiscount = item.unit_price * item.quantity * discountRate;
           return total + itemDiscount;
-        }, 0) + Number(state.discountAmount)
-      ).toPrecision(2)
+        }, 0) +
+        Number(state.discountAmount || 0) +
+        Number(state.extra_discount || 0)
+      ).toFixed(2)
     );
 
     // 3. vat
@@ -140,6 +139,7 @@ const initialState: IOrder = {
   due: 0,
   paid: 0,
   method: "",
+  extra_discount: 0,
 };
 
 const billSlice = createSlice({
@@ -231,18 +231,6 @@ const billSlice = createSlice({
         }
       }
     },
-    // setItemDiscount: (state, { payload }) => {
-    //   console.log(payload, "payload in discount");
-    //   if (state?.medicines?.length) {
-    //     const index = state.medicines.findIndex(
-    //       (item) => item?._id == payload?.item?._id
-    //     );
-    //     if (index !== -1) {
-    //       state.medicines[index].discount = payload?.discount;
-    //     }
-    //   }
-    //   balanceUpdater(state);
-    // },
 
     setItemDiscount: (state, { payload }) => {
       if (state?.medicines?.length) {
