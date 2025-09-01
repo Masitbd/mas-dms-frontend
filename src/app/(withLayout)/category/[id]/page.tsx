@@ -9,14 +9,15 @@ import {
   useUpdateCategoryMutation,
 } from "@/redux/api/categories/category.api";
 import { Settings } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { UseFormReset } from "react-hook-form";
 
-const UpdateCategory = ({ params }: { params: { id: string } }) => {
+const UpdateCategory = () => {
+  const { id } = useParams();
   const router = useRouter();
   const { data: defaultValues, isLoading: dataLoading } =
-    useGetSingleCategoryQuery(params.id);
+    useGetSingleCategoryQuery(id as string);
   const [update, { isLoading: updateLoading, isSuccess }] =
     useUpdateCategoryMutation();
   const submitHandler = async (
@@ -24,7 +25,7 @@ const UpdateCategory = ({ params }: { params: { id: string } }) => {
     reset: UseFormReset<ICategoryFormData>
   ) => {
     try {
-      const result = await update({ id: params.id, data }).unwrap();
+      const result = await update({ id, data }).unwrap();
       if (result?.success) {
         Toast.fire({ icon: "success", title: "Category Updated" });
         reset({ name: "" });

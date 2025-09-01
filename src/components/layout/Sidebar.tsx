@@ -1,31 +1,14 @@
 "use client";
 import React from "react";
 import { Dropdown, Nav, Sidebar, Sidenav } from "rsuite";
-import Dashboard from "@rsuite/icons/legacy/Dashboard";
-
-import AdminIcon from "@rsuite/icons/Admin";
-import GearCircle from "@rsuite/icons/legacy/GearCircle";
-import TableIcon from "@rsuite/icons/Table";
-import PeoplesIcon from "@rsuite/icons/Peoples";
-
-import ListIcon from "@rsuite/icons/List";
-import SettingIcon from "@rsuite/icons/Setting";
-import PeopleBranchIcon from "@rsuite/icons/PeopleBranch";
 
 import NavToggle from "./NavToggle";
 import { NavLink } from "./Navlink";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { config, IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faCalculator } from "@fortawesome/free-solid-svg-icons";
-import StorageIcon from "@rsuite/icons/Storage";
-import FunnelTimeIcon from "@rsuite/icons/FunnelTime";
-import DocPassIcon from "@rsuite/icons/DocPass";
 
 import DateTaskIcon from "@rsuite/icons/DateTask";
 import { useRouter } from "next/navigation";
-import UserInfoIcon from "@rsuite/icons/UserInfo";
+
 import { useSession } from "next-auth/react";
-import { ENUM_USER } from "@/enums/EnumUser";
 
 const DashSidebar = () => {
   const navigate = useRouter();
@@ -75,6 +58,45 @@ const DashSidebar = () => {
               <Nav.Item href="/medicine-sale" eventKey="7" as={NavLink}>
                 Sales
               </Nav.Item>
+              <Nav.Menu
+                eventKey="9"
+                trigger="hover"
+                title="Reports"
+                icon={<DateTaskIcon />}
+                placement="rightStart"
+              >
+                <Nav.Item
+                  eventKey="9-1"
+                  href="/reports/medicine-sales"
+                  as={NavLink}
+                >
+                  Medicine Sales Reports
+                </Nav.Item>
+                <Nav.Item
+                  eventKey="9-2"
+                  href="/reports/due-collection"
+                  as={NavLink}
+                >
+                  Due Collection Statement
+                </Nav.Item>
+                {/*  */}
+                <Nav.Item
+                  eventKey="9-3"
+                  href="/reports/due-collection-summary"
+                  as={NavLink}
+                >
+                  Due Collection Summary
+                </Nav.Item>
+                <Nav.Item
+                  eventKey="9-4"
+                  href="/reports/patient-due"
+                  as={NavLink}
+                >
+                  Patient Due Statement
+                </Nav.Item>
+
+                {/*  */}
+              </Nav.Menu>
             </Nav>
           </Sidenav.Body>
         </Sidenav>

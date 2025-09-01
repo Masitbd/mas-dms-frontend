@@ -4,19 +4,19 @@ import { IGenericFormData } from "@/components/generics/GenericInterface";
 import { Toast } from "@/components/ui/Toast";
 import { ENUM_MODE } from "@/enums/EnumMode";
 import {
-  useGetGenericQuery,
   useGetSingleGenericQuery,
   useUpdateGenericMutation,
 } from "@/redux/api/generics/generic.api";
 import { Settings } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { UseFormReset } from "react-hook-form";
 
-const UpdateGeneric = ({ params }: { params: { id: string } }) => {
+const UpdateGeneric = () => {
+  const { id } = useParams();
   const router = useRouter();
   const { data: defaultValues, isLoading: dataLoading } =
-    useGetSingleGenericQuery(params.id);
+    useGetSingleGenericQuery(id as string);
   const [update, { isLoading: updateLoading, isSuccess }] =
     useUpdateGenericMutation();
   const submitHandler = async (
@@ -24,7 +24,7 @@ const UpdateGeneric = ({ params }: { params: { id: string } }) => {
     reset: UseFormReset<IGenericFormData>
   ) => {
     try {
-      const result = await update({ id: params.id, data }).unwrap();
+      const result = await update({ id, data }).unwrap();
       if (result?.success) {
         Toast.fire({ icon: "success", title: "Generic Updated" });
         reset();

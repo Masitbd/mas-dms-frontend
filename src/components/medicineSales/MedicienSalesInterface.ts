@@ -10,6 +10,7 @@ export interface ISaleFormData {
   patient_type: "outdoor" | "indoor";
   bed_no?: string;
   indoor_bill_no?: string;
+  method: string;
 }
 
 export const salesZodSchema = z.object({

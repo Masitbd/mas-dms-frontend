@@ -38,6 +38,8 @@ export interface IOrder {
   due: number;
   pPayment?: number;
   paid: number;
+  extra_discount: number;
+  method: string;
 }
 
 export type IUnregisteredCustomerInfo = {
@@ -75,16 +77,14 @@ const balanceUpdater = (state: IOrder) => {
     state.totalDiscount = parseFloat(
       (
         state.medicines.reduce((total, item) => {
-          const itemDiscount =
-            item.unit_price *
-            item.quantity *
-            (item.discount
-              ? (Number(item.discount) || Number(state.percentDiscount)) / 100
-              : 0);
-
+          const discountRate =
+            (item.discount ?? state.percentDiscount ?? 0) / 100;
+          const itemDiscount = item.unit_price * item.quantity * discountRate;
           return total + itemDiscount;
-        }, 0) + Number(state.discountAmount)
-      ).toPrecision(2)
+        }, 0) +
+        Number(state.discountAmount || 0) +
+        Number(state.extra_discount || 0)
+      ).toFixed(2)
     );
 
     // 3. vat
@@ -116,7 +116,9 @@ const balanceUpdater = (state: IOrder) => {
 
     state.netPayable = state.totalBill + state.totalVat - state.totalDiscount;
 
-    state.due = state.netPayable - (state.paid ?? 0) - (state?.pPayment ?? 0);
+    state.due = parseFloat(
+      (state.netPayable - (state.paid ?? 0) - (state?.pPayment ?? 0)).toFixed(2)
+    );
   }
 };
 
@@ -136,6 +138,8 @@ const initialState: IOrder = {
   netPayable: 0,
   due: 0,
   paid: 0,
+  method: "",
+  extra_discount: 0,
 };
 
 const billSlice = createSlice({
@@ -227,17 +231,22 @@ const billSlice = createSlice({
         }
       }
     },
+
     setItemDiscount: (state, { payload }) => {
       if (state?.medicines?.length) {
-        const index = state.medicines.findIndex(
-          (item) => item?._id == payload?.item?._id
+        const foundItem = state.medicines.find(
+          (item) => String(item?.medicineId) === String(payload?.item) // Use medicineId instead of _id
         );
-        if (index !== -1) {
-          state.medicines[index].discount = payload?.discount;
+
+        if (foundItem) {
+          foundItem.discount = payload?.discount;
+        } else {
+          console.error("Medicine not found. Looking for:", payload?.item);
         }
       }
       balanceUpdater(state);
     },
+
     resetBill: () => initialState,
   },
 });
