@@ -75,31 +75,35 @@ const MedicineSalesTable = ({
   return (
     <div>
       <Table data={data} loading={isLoading} autoHeight>
-        <Column flexGrow={1}>
+        <Column flexGrow={1.5}>
           <HeaderCell>Invoice No</HeaderCell>
           <Cell dataKey="invoice_no" />
         </Column>
-        <Column flexGrow={2}>
+        <Column flexGrow={1}>
           <HeaderCell>Total Amount</HeaderCell>
-          <Cell dataKey="paymentId.totalBill" />
+          <Cell dataKey="totalBill" />
         </Column>
-        <Column flexGrow={2}>
+        <Column flexGrow={1}>
           <HeaderCell>Total Dis</HeaderCell>
-          <Cell dataKey="paymentId.totalDiscount" />
+          <Cell dataKey="totalDiscount" />
         </Column>
-        <Column flexGrow={2}>
+        <Column flexGrow={1}>
           <HeaderCell>Payable</HeaderCell>
-          <Cell dataKey="paymentId.netPayable" />
+          <Cell dataKey="netPayable" />
         </Column>
-        <Column flexGrow={2}>
+        <Column flexGrow={1}>
+          <HeaderCell>Total Paid</HeaderCell>
+          <Cell dataKey="paid" />
+        </Column>
+        <Column flexGrow={1}>
           <HeaderCell>Due</HeaderCell>
-          <Cell dataKey="paymentId.due" />
+          <Cell dataKey="due" />
         </Column>
-        <Column flexGrow={2}>
+        <Column flexGrow={1.5}>
           <HeaderCell>Posted By</HeaderCell>
           <Cell dataKey="posted_by" />
         </Column>
-        <Column flexGrow={1.5}>
+        <Column flexGrow={2}>
           <HeaderCell>Action</HeaderCell>
           <Cell>
             {(rowData) => (
