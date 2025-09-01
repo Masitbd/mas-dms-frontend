@@ -144,24 +144,29 @@ const PatientDueReportsTable: React.FC<TDailySalesSummery> = ({
                 {
                   text: data?.totalBill?.toFixed(2) || "0.00",
                   alignment: "center",
+                  bold: true,
                 }, // col 3
                 {
                   text: data?.totalDiscount?.toFixed(2) || "0.00",
                   alignment: "center",
+                  bold: true,
                 }, // col 4
                 {
                   text: data?.totalNetPayable?.toFixed(2) || "0.00",
                   alignment: "center",
+                  bold: true,
                 }, // col 5
                 {
                   text: data?.totalPaid?.toFixed(2) || "0.00",
                   alignment: "center",
+                  bold: true,
                 }, // col 6
                 {
                   text: data?.totalDue?.toFixed(2) || "0.00",
                   alignment: "center",
+                  bold: true,
                 }, // col 7
-                { text: " ", alignment: "center" }, // col 8
+                { text: " ", alignment: "center", bold: true }, // col 8
               ],
             ],
           },
@@ -257,21 +262,6 @@ const PatientDueReportsTable: React.FC<TDailySalesSummery> = ({
           <div>{data?.totalDue?.toFixed(2)}</div>
         </div>
       </div>
-      {/* 
-      <div className="mt-10 w-full max-w-3xl mx-auto border">
-        <h1 className="text-lg font-bold p-2  border bg-gray-200 text-red-700">
-          Payment Mode
-        </h1>
-        {data?.records?.[0]?.paymentModeSummary?.map((item, index) => (
-          <div
-            key={index}
-            className="grid grid-cols-2 text-center p-2 border-b"
-          >
-            <div>{item._id}</div>
-            <div>{item.total}</div>
-          </div>
-        ))}
-      </div> */}
     </div>
   );
 };

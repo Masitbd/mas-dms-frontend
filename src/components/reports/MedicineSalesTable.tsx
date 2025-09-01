@@ -7,56 +7,27 @@ import "pdfmake/build/vfs_fonts";
 import { formatDate } from "@/utils/formateDate";
 import ReporetHeader from "@/utils/ReporetHeader";
 
-export type TBranch = {
-  _id: string;
-  name: string;
-  address1: string;
-  phone: string;
-  vatNo: string;
-};
-
-type TDailyStatementSummary = {
-  _id: {
-    date: string; // ISO date format
-  };
+type TMedicineSaleData = {
   totalBill: number;
-  totalVat: number;
-  totalGuest: number;
+
   totalDiscount: number;
-  tSChargse: number;
+  name: string;
+  invoice_no: string;
   metPayable: number;
-  totalDue: number;
-  totalPaid: number;
-  branchName: string;
-};
-
-type TPaymentModeSummary = {
-  _id: string; // e.g., "cash", "bank"
-  total: number;
-}[];
-
-type TTotal = {
-  _id: null | string;
-  grandTotalGuest: number;
-  grandTotalPaid: number;
-  grandTotalVat: number;
-  grandTotalBill: number;
-  grandTotalDiscount: number;
-  grandTotalScharge: number;
-  grandTotalPayable: number;
-  grandTotalDue: number;
-};
-
-type TGroup = {
-  dateWiseSummary: TDailyStatementSummary[];
-  total: TTotal;
-  paymentModeSummary: TPaymentModeSummary;
+  due: number;
+  paid: number;
+  netPayable: number;
+  bed: string;
 };
 
 type TDailySalesSummery = {
   data: {
-    branchInfo: TBranch;
-    result: TGroup[];
+    totalBill: number;
+    totalDiscount: number;
+    totalNetPayable: number;
+    totalPaid: number;
+    totalDue: number;
+    records: TMedicineSaleData[];
   };
   startDate: Date | null;
   endDate: Date | null;
@@ -79,34 +50,28 @@ const MedicineSalesTable: React.FC<TDailySalesSummery> = ({
       pageMargins: [20, 20, 20, 20],
       content: [
         // Title
-        {
-          text: `${data?.branchInfo?.name}`,
-          style: "header",
-          alignment: "center",
-          margin: [0, 0, 0, 10],
-        },
+        // {
+        //   text: `${data?.branchInfo?.name}`,
+        //   style: "header",
+        //   alignment: "center",
+        //   margin: [0, 0, 0, 10],
+        // },
+
+        // {
+        //   text: `${data?.branchInfo?.address1}`,
+
+        //   alignment: "center",
+        //   margin: [0, 0, 0, 4],
+        // },
+        // {
+        //   text: `Phone: ${data?.branchInfo?.phone}`,
+
+        //   alignment: "center",
+        //   margin: [0, 0, 0, 4],
+        // },
 
         {
-          text: `${data?.branchInfo?.address1}`,
-
-          alignment: "center",
-          margin: [0, 0, 0, 4],
-        },
-        {
-          text: `Phone: ${data?.branchInfo?.phone}`,
-
-          alignment: "center",
-          margin: [0, 0, 0, 4],
-        },
-        {
-          text: `VAT Registration No: ${data?.branchInfo?.vatNo}`,
-          style: "subheader",
-          alignment: "center",
-          margin: [0, 0, 0, 8],
-        },
-
-        {
-          text: `Sales Reports Summery: ${
+          text: `Medicine Sales Reports Summery: ${
             formattedStartDate === formattedEndDate
               ? formattedStartDate
               : `from ${formattedStartDate} to ${formattedEndDate}`
@@ -123,34 +88,34 @@ const MedicineSalesTable: React.FC<TDailySalesSummery> = ({
           table: {
             headerRows: 1, // Specify the number of header rows
 
-            widths: ["*", "*", "*", "*", "*", "*", "*", "*", "*"], // Adjust column widths as needed
+            widths: ["*", "*", "*", "*", "*", "*", "*", "*"], // Adjust column widths as needed
             body: [
               // Define the header row
               [
-                { text: "Branch", bold: true, alignment: "center" },
+                { text: "Bill No", bold: true, alignment: "center" },
 
-                { text: "Date", bold: true, alignment: "center" },
-                { text: "Total Guests", bold: true, alignment: "center" },
+                { text: "Bayer Name", bold: true, alignment: "center" },
+                { text: "Bed/Cabin", bold: true, alignment: "center" },
                 { text: "Total Bill", bold: true, alignment: "center" },
-                { text: "Total VAT", bold: true, alignment: "center" },
-                { text: "Service Charges", bold: true, alignment: "center" },
+                { text: "Discount", bold: true, alignment: "center" },
+
                 { text: "Net Payable", bold: true, alignment: "center" },
-                { text: "Total Due", bold: true, alignment: "center" },
                 { text: "Total Paid", bold: true, alignment: "center" },
+                { text: "Total Due", bold: true, alignment: "center" },
               ],
               // Define the data rows
-              ...data?.result?.[0]?.dateWiseSummary?.map((paymentGroup) =>
+              ...data?.records?.map((paymentGroup) =>
                 [
-                  paymentGroup?.branchName || "N/A",
+                  paymentGroup?.invoice_no || "N/A",
 
-                  paymentGroup?._id?.date || "N/A",
-                  paymentGroup?.totalGuest || 0,
+                  paymentGroup?.name || "N/A",
+                  paymentGroup?.bed || 0,
                   paymentGroup?.totalBill || 0,
-                  paymentGroup?.totalVat?.toFixed(2) || "0.00",
-                  paymentGroup?.tSChargse || 0,
+
+                  paymentGroup?.totalDiscount?.toFixed(2) || "0.00",
                   paymentGroup?.metPayable?.toFixed(2) || "0.00",
-                  paymentGroup?.totalDue || 0,
-                  paymentGroup?.totalPaid || 0,
+                  paymentGroup?.paid || 0,
+                  paymentGroup?.due || 0,
                 ].map((text) => ({ text, alignment: "center" }))
               ),
             ],
@@ -161,37 +126,41 @@ const MedicineSalesTable: React.FC<TDailySalesSummery> = ({
         // Total Summary
         {
           table: {
-            widths: [80, "*", 60, 60, 60, 60, 60, 60],
+            widths: ["*", "*", "*", "*", "*", "*", "*", "*"],
             body: [
               [
-                { text: "Total Sales Amount", bold: true, alignment: "center" },
-                data?.result?.[0]?.total?.grandTotalGuest,
-                data?.result?.[0]?.total?.grandTotalBill,
-                data?.result?.[0]?.total?.grandTotalVat?.toFixed(2),
-                data?.result?.[0]?.total?.grandTotalScharge?.toFixed(2),
-                data?.result?.[0]?.total?.grandTotalPayable,
-                data?.result?.[0]?.total?.grandTotalDue,
-                data?.result?.[0]?.total?.grandTotalPaid,
-              ].map((text) => ({ text, alignment: "center" })),
+                { text: "Total Amount", bold: true, alignment: "center" }, // col 1
+                { text: " ", alignment: "center" }, // col 2
+                { text: " ", alignment: "center" }, // col 2
+                {
+                  text: data?.totalBill?.toFixed(2) || "0.00",
+                  alignment: "center",
+                  bold: true,
+                }, // col 3
+                {
+                  text: data?.totalDiscount?.toFixed(2) || "0.00",
+                  alignment: "center",
+                  bold: true,
+                }, // col 4
+                {
+                  text: data?.totalNetPayable?.toFixed(2) || "0.00",
+                  alignment: "center",
+                  bold: true,
+                }, // col 5
+                {
+                  text: data?.totalPaid?.toFixed(2) || "0.00",
+                  alignment: "center",
+                  bold: true,
+                }, // col 6
+                {
+                  text: data?.totalDue?.toFixed(2) || "0.00",
+                  alignment: "center",
+                  bold: true,
+                }, // col 7
+              ],
             ],
           },
           margin: [0, 10, 0, 0],
-        },
-
-        // Payment Mode Summary
-        {
-          text: "Payment Mode Summary",
-          style: "subheader",
-          margin: [0, 20, 0, 10],
-        },
-        {
-          table: {
-            widths: ["*", 60],
-            body: data?.result?.[0]?.paymentModeSummary?.map((item) => [
-              { text: item._id, alignment: "center" },
-              { text: item.total, alignment: "center" },
-            ]),
-          },
         },
       ],
       styles: {
@@ -232,51 +201,43 @@ const MedicineSalesTable: React.FC<TDailySalesSummery> = ({
       </div>
 
       <div className="w-full">
-        <div className="grid grid-cols-9 bg-gray-100 font-semibold text-center p-2">
-          <div>Branch</div>
-          <div>Bill Date</div>
-
-          <div>Guest </div>
-
+        <div className="grid grid-cols-8 bg-gray-100 font-semibold text-center p-2">
+          <div>Bill No</div>
+          <div>Bayer Name</div>
+          <div>Bed/Cabin</div>
           <div>Total Bill</div>
-          <div>Total Vat</div>
-          <div>T S Charge</div>
+          <div>Discount</div>
 
           <div>Net Payable</div>
-          <div>Due</div>
           <div>Paid</div>
+          <div>Due</div>
         </div>
 
         {/* Payment Types */}
-        {data?.result?.[0]?.dateWiseSummary?.length > 0 ? (
-          data?.result?.[0]?.dateWiseSummary?.map(
-            (paymentGroup, paymentIndex) => (
-              <div
-                key={paymentIndex}
-                className="grid grid-cols-9 text-center p-2 border-b"
-              >
-                <div className="text-green-600 font-semibold">
-                  {paymentGroup?.branchName}
-                </div>
-                <div className=" font-semibold">{paymentGroup._id.date}</div>
-
-                <div className="text-green-600 font-semibold">
-                  {paymentGroup._id.date}
-                </div>
-
-                <div>{paymentGroup.totalGuest || 0}</div>
-
-                <div>{paymentGroup.totalBill || 0}</div>
-                <div>{paymentGroup.totalVat?.toFixed(2)}</div>
-
-                <div>{paymentGroup.tSChargse || 0}</div>
-
-                <div>{paymentGroup.metPayable?.toFixed(2) || 0}</div>
-                <div>{paymentGroup.totalDue || 0}</div>
-                <div>{paymentGroup.totalPaid || 0}</div>
+        {data?.records?.length > 0 ? (
+          data?.records?.map((paymentGroup, paymentIndex) => (
+            <div
+              key={paymentIndex}
+              className="grid grid-cols-8 text-center p-2 border-b"
+            >
+              <div className="text-green-600 font-semibold">
+                {paymentGroup?.invoice_no}
               </div>
-            )
-          )
+
+              <div className="text-green-600 font-semibold">
+                {paymentGroup?.name}
+              </div>
+
+              <div>{paymentGroup.bed || ""}</div>
+
+              <div>{paymentGroup.totalBill || 0}</div>
+
+              <div>{paymentGroup.totalDiscount?.toFixed(2) || 0}</div>
+              <div>{paymentGroup.netPayable?.toFixed(2) || 0}</div>
+              <div>{paymentGroup.paid || 0}</div>
+              <div>{paymentGroup.due || 0}</div>
+            </div>
+          ))
         ) : (
           <p className="text-center mt-10 text-xl text-red-500">
             No Data Found
@@ -284,30 +245,14 @@ const MedicineSalesTable: React.FC<TDailySalesSummery> = ({
         )}
 
         <div className="grid grid-cols-8 border-b font-bold text-center">
-          <div>Total Sales Amount</div>
-          <div>{data?.result?.[0]?.total?.grandTotalGuest}</div>
-          <div>{data?.result?.[0]?.total?.grandTotalBill}</div>
-          <div>{data?.result?.[0]?.total?.grandTotalVat?.toFixed(2)}</div>
-          <div>{data?.result?.[0]?.total?.grandTotalScharge?.toFixed(2)}</div>
-          <div>{data?.result?.[0]?.total?.grandTotalPayable}</div>
-          <div>{data?.result?.[0]?.total?.grandTotalDue}</div>
-          <div>{data?.result?.[0]?.total?.grandTotalPaid}</div>
-        </div>
-      </div>
+          <div className="col-span-3">Total Sales Amount</div>
 
-      <div className="mt-10 w-full max-w-3xl mx-auto border">
-        <h1 className="text-lg font-bold p-2  border bg-gray-200 text-red-700">
-          Payment Mode
-        </h1>
-        {data?.result?.[0]?.paymentModeSummary?.map((item, index) => (
-          <div
-            key={index}
-            className="grid grid-cols-2 text-center p-2 border-b"
-          >
-            <div>{item._id}</div>
-            <div>{item.total}</div>
-          </div>
-        ))}
+          <div>{data?.totalBill ?? 0}</div>
+          <div>{data?.totalDiscount}</div>
+          <div>{data?.totalNetPayable}</div>
+          <div>{data?.totalPaid}</div>
+          <div>{data?.totalDue}</div>
+        </div>
       </div>
     </div>
   );
