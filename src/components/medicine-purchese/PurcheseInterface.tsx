@@ -113,6 +113,7 @@ export const PurchaseInterface = ({
       result = await updatePurchase({ id, data: submissionData }).unwrap();
     } else {
       result = await postData(submissionData).unwrap();
+      console.log("hi");
     }
 
     if (result?.success) {
@@ -227,7 +228,7 @@ export const PurchaseInterface = ({
             updateLoading
           }
         />
-        <Form onSubmit={(d) => handleSubmit(onSubmit)} fluid id="test111">
+        <Form onSubmit={handleSubmit(onSubmit)} fluid id="test111">
           {/* Purchase Header Form */}
           <PurchaseHeaderForm
             control={control as unknown as Control<PurchaseHeaderData>}
