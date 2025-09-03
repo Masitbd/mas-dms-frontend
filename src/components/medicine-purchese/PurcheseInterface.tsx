@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Control, useForm } from "react-hook-form";
 import { Form, Button, Divider, Message, useToaster } from "rsuite";
 import { ItemDetailsForm, PurchaseDetailItem } from "./ItemDetails";
@@ -17,7 +17,10 @@ import { ENUM_MODE } from "@/enums/EnumMode";
 import { defaultValues, useValueChange } from "./MedicinePurcheseTypes";
 import Loading from "../layout/Loading";
 interface CombinedPurchaseData extends PurchaseHeaderData, TaxDiscountData {}
-
+type FormSubmitter = (
+  formValue: Record<string, any> | null,
+  event?: FormEvent<HTMLFormElement>
+) => void;
 export const PurchaseInterface = ({
   id,
   mode,
@@ -228,7 +231,11 @@ export const PurchaseInterface = ({
             updateLoading
           }
         />
-        <Form onSubmit={handleSubmit(onSubmit)} fluid id="test111">
+        <Form
+          onSubmit={handleSubmit(onSubmit) as unknown as FormSubmitter}
+          fluid
+          id="test111"
+        >
           {/* Purchase Header Form */}
           <PurchaseHeaderForm
             control={control as unknown as Control<PurchaseHeaderData>}
