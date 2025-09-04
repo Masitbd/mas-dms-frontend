@@ -431,7 +431,7 @@ const MedicienSalesForm = ({
               <Table bordered cellBordered height={230} data={state?.medicines}>
                 <Column flexGrow={1}>
                   <HeaderCell children="M. Category" />
-                  <Cell>{(rowData) => rowData?.item?.category?.name}</Cell>
+                  <Cell>{(rowData) => rowData?.item?.category}</Cell>
                 </Column>
                 <Column flexGrow={3}>
                   <HeaderCell children="M. Name" />

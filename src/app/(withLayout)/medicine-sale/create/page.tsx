@@ -4,6 +4,7 @@ import MedicienSalesForm from "@/components/medicineSales/MedicineSalesForm";
 
 import { Toast } from "@/components/ui/Toast";
 import { ENUM_MODE } from "@/enums/EnumMode";
+import { useAppDispatch } from "@/lib/hooks";
 import { useCreateMedicineSalesMutation } from "@/redux/api/medicines/sales.api";
 import { resetBill } from "@/redux/order/orderSlice";
 import { SquarePercent } from "lucide-react";
@@ -12,7 +13,7 @@ import { UseFormReset } from "react-hook-form";
 
 const page = () => {
   const router = useRouter();
-
+  const dispatch = useAppDispatch();
   const [createMedicineSales, { isLoading, isSuccess }] =
     useCreateMedicineSalesMutation();
 
@@ -23,6 +24,7 @@ const page = () => {
         Toast.fire({ icon: "success", title: "Sold Successfuly" });
         resetBill();
         reset();
+        dispatch(resetBill());
         router.push("/medicine-sale");
       }
     } catch (error) {
