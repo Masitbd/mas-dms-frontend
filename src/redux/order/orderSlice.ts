@@ -8,7 +8,7 @@ export interface IMedicineSale {
   medicineId: string;
   quantity: number;
   unit_price: number;
-  salesRate: number;
+  price: number;
 
   total_price: number;
   discount: number;

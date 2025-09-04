@@ -8,14 +8,16 @@ import { TMedicineEntry } from "./medicineEntry.interface";
 
 type ITableProps = {
   isLoading: boolean;
-  data: any[];
+  data: {
+    data: any[];
+  };
 };
 const MedicineEntryTable = ({ data, isLoading }: ITableProps) => {
   const { Cell, Column, HeaderCell } = Table;
 
   return (
     <div>
-      <Table data={data} loading={isLoading} autoHeight hover bordered>
+      <Table data={data?.data} loading={isLoading} autoHeight hover bordered>
         <Column flexGrow={1}>
           <HeaderCell>Medicine ID</HeaderCell>
           <Cell dataKey="medicineId" />
@@ -43,7 +45,7 @@ const MedicineEntryTable = ({ data, isLoading }: ITableProps) => {
 
         <Column flexGrow={1.5}>
           <HeaderCell>Sales Rate</HeaderCell>
-          <Cell dataKey="salesRate" />
+          <Cell dataKey="price" />
         </Column>
         <Column flexGrow={1.5}>
           <HeaderCell>Discount</HeaderCell>

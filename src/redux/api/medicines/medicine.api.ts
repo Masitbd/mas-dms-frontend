@@ -19,6 +19,14 @@ const medicineApi = baseApi.injectEndpoints({
       }),
       providesTags: ["medicine-list"],
     }),
+    getMedicinesWithStock: build.query({
+      query: (query) => ({
+        url: "/medicines/with-stock",
+        method: "GET",
+        params: query,
+      }),
+      providesTags: ["medicine-list"],
+    }),
     getSingleMedicine: build.query({
       query: (id: string) => ({
         url: `/medicines/${id}`,
@@ -47,6 +55,7 @@ const medicineApi = baseApi.injectEndpoints({
 export const {
   useCreateMedicineMutation,
   useGetMedicinesQuery,
+  useGetMedicinesWithStockQuery,
   useGetSingleMedicineQuery,
   useUpdateMedicineMutation,
   useDeleteMedicineMutation,

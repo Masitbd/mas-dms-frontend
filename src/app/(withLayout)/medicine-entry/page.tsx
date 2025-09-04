@@ -8,15 +8,11 @@ import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
 const MedicineListPage = () => {
   const { data: medicines, isLoading } = useGetMedicinesQuery(undefined);
 
-
   return (
     <div className="p-4">
       <MedicineEntryHeader />
       <div className="my-4">
-        <MedicineEntryTable
-          data={medicines?.data?.data}
-          isLoading={isLoading}
-        />
+        <MedicineEntryTable data={medicines?.data?.[0]} isLoading={isLoading} />
       </div>
     </div>
   );
