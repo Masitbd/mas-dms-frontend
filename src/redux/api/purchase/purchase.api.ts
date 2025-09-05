@@ -24,7 +24,7 @@ const purchaseApi = baseApi.injectEndpoints({
         url: `/purchases/${id}`,
         method: "GET",
       }),
-      providesTags: ["purchase-list"],
+      providesTags: ["single-purchase"],
     }),
     getPurchasesQuery: build.query({
       query: (id: string) => ({
@@ -62,7 +62,7 @@ const purchaseApi = baseApi.injectEndpoints({
         url: `/purchases/purchase-invoice/${id}`,
         method: "GET",
       }),
-      providesTags: ["single-medicine"],
+      providesTags: ["single-purchase"],
     }),
   }),
 });

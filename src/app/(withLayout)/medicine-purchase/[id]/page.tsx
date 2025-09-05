@@ -7,6 +7,11 @@ import { useGetPurchaseInvoiceQuery } from "@/redux/api/purchase/purchase.api";
 import { ShoppingCart } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "rsuite";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import { generatePurchasePdf } from "@/components/medicine-purchese/MedicinePurcheseTypes";
+import PurchasePayment from "@/components/medicine-purchese/PurchasePayment";
+pdfMake.vfs = pdfFonts.vfs;
 
 export default function PurchasePrintExample() {
   const { id } = useParams();
@@ -17,6 +22,10 @@ export default function PurchasePrintExample() {
   } = useGetPurchaseInvoiceQuery(id as string, { skip: !id });
 
   const router = useRouter();
+
+  const printHandler = async () => {
+    generatePurchasePdf(purchaseData?.data, { open: true });
+  };
 
   return (
     <div className="page mx-auto p-6 bg-gray-50 text-gray-900 print:bg-white print:p-0 relative">
@@ -51,7 +60,12 @@ export default function PurchasePrintExample() {
       />
 
       <div className="flex gap-2 justify-end my-3">
-        <Button appearance="primary" color="blue" size="lg">
+        <Button
+          appearance="primary"
+          color="blue"
+          size="lg"
+          onClick={() => printHandler()}
+        >
           Print
         </Button>
         <Button
@@ -62,6 +76,10 @@ export default function PurchasePrintExample() {
         >
           Back
         </Button>
+      </div>
+
+      <div>
+        <PurchasePayment purchaseData={purchaseData?.data?.purchaseInfo} />
       </div>
     </div>
   );

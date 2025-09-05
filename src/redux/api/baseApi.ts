@@ -23,5 +23,7 @@ export const baseApi = createApi({
     "stock",
     "single-stock",
     "reports",
+    "purchase-payment-list",
+    "single-purchase",
   ],
 });

@@ -50,34 +50,6 @@ export const PurchaseInterface = ({
   const vatPercentage = watch("vatPercentage");
   const discountPercentage = watch("discountPercentage");
 
-  // Auto-calculate VAT and Discount amounts
-  const handleVatDiscountRate = () => {
-    if (totalAmount && vatPercentage) {
-      const vatAmount = (totalAmount * vatPercentage) / 100;
-      setValue("vatAmount", Number(vatAmount.toFixed(2)));
-    }
-
-    if (totalAmount && discountPercentage) {
-      let totalAmountWithDiscount = 0;
-
-      const totalAmountWithoutDiscount = purchaseItems?.reduce((a, b) => {
-        if (!b.discount) {
-          return a + b.amount;
-        } else {
-          return 0;
-        }
-      }, 0);
-
-      const discountAmount =
-        (totalAmountWithoutDiscount * discountPercentage) / 100;
-      setValue("discountAmount", Number(discountAmount.toFixed(2)));
-    }
-  };
-  useValueChange(
-    [totalAmount, discountPercentage, vatPercentage],
-    handleVatDiscountRate
-  );
-
   // Auto-calculate total amount from purchase items
   React.useEffect(() => {
     const totalFromItems = purchaseItems.reduce(
@@ -87,7 +59,62 @@ export const PurchaseInterface = ({
     if (totalFromItems > 0) {
       setValue("totalAmount", Number(totalFromItems.toFixed(2)));
     }
-  }, [purchaseItems]);
+
+    if (purchaseItems && purchaseItems?.length) {
+      let totalAmountWithoutItemDiscount = 0; // for overall discount %
+      let itemWiseDiscount = 0; // sum of per-item discounts
+
+      purchaseItems.forEach((p) => {
+        const qty = Number(p?.quantity ?? 0);
+        const rate = Number(p?.purchaseRate ?? 0);
+        const amt = Number(p?.amount ?? rate * qty);
+        const itemDiscountPct = Number(p?.discount ?? 0);
+        const hasItemDiscount = itemDiscountPct > 0;
+
+        if (hasItemDiscount) {
+          // per-item discount
+          const totalPrice = rate * qty;
+          itemWiseDiscount += (totalPrice * itemDiscountPct) / 100;
+        } else {
+          // eligible for overall discount
+          totalAmountWithoutItemDiscount += amt;
+        }
+      });
+
+      const overallPct = Number(discountPercentage ?? 0); // treat missing as 0%
+      const overallDiscount =
+        (totalAmountWithoutItemDiscount * overallPct) / 100;
+
+      const discountAmount = Number(
+        (itemWiseDiscount + overallDiscount).toFixed(2)
+      );
+      setValue("discountAmount", discountAmount);
+    }
+    // Vat calculation
+    if (purchaseItems && purchaseItems?.length) {
+      let baseWithoutItemVAT = 0; // will get overall VAT%
+      let itemWiseVAT = 0; // sum of per-item VATs
+
+      purchaseItems.forEach((p) => {
+        const qty = Number(p?.quantity ?? 0);
+        const rate = Number(p?.purchaseRate ?? 0);
+        const base = Number(p?.amount ?? rate * qty);
+        const itemVatPct = Number(p?.vat ?? 0);
+        const hasItemVAT = itemVatPct > 0;
+
+        if (hasItemVAT) {
+          itemWiseVAT += (base * itemVatPct) / 100;
+        } else {
+          baseWithoutItemVAT += base;
+        }
+      });
+
+      const overallVatPct = Number(vatPercentage ?? 0); // treat missing as 0%
+      const overallVAT = (baseWithoutItemVAT * overallVatPct) / 100;
+
+      setValue("vatAmount", Number((itemWiseVAT + overallVAT).toFixed(2)));
+    }
+  }, [purchaseItems, discountPercentage, vatPercentage]);
 
   // Submission
   const router = useRouter();
