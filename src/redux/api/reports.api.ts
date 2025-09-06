@@ -41,6 +41,13 @@ const reportsApi = baseApi.injectEndpoints({
         params: args,
       }),
     }),
+    getMedicineProfitOverview: build.query({
+      query: (args) => ({
+        url: "/reports/medicine-profit-loss",
+        method: "GET",
+        params: args,
+      }),
+    }),
   }),
 });
 
@@ -50,4 +57,5 @@ export const {
   useGetMedicinesSalesReportsQuery,
   useGetPatientDueReportsQuery,
   useGetMedicineStockOverviewQuery,
+  useGetMedicineProfitOverviewQuery,
 } = reportsApi;
