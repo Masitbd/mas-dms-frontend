@@ -25,5 +25,7 @@ export const baseApi = createApi({
     "reports",
     "purchase-payment-list",
     "single-purchase",
+    "single-profile",
+    "single-user",
   ],
 });

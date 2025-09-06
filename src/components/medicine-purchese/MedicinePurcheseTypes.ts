@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as yup from "yup";
 
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+pdfMake.vfs = pdfFonts as unknown as { [file: string]: string };
+
 export const medicinePurchaseSchema = yup
   .object({
     challanNo: yup.string().required(),

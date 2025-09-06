@@ -9,9 +9,11 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "rsuite";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+pdfMake.vfs = pdfFonts as unknown as {
+  [file: string]: string;
+};
 import { generatePurchasePdf } from "@/components/medicine-purchese/MedicinePurcheseTypes";
 import PurchasePayment from "@/components/medicine-purchese/PurchasePayment";
-pdfMake.vfs = pdfFonts.vfs;
 
 export default function PurchasePrintExample() {
   const { id } = useParams();

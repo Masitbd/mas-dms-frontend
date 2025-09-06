@@ -1,8 +1,17 @@
 import React from "react";
 import { Controller, Control, FieldErrors } from "react-hook-form";
-import { Form, Grid, Row, Col, InputNumber } from "rsuite";
+import {
+  Form,
+  Grid,
+  Row,
+  Col,
+  InputNumber,
+  InputProps,
+  InputNumberProps,
+} from "rsuite";
 import { Rfield } from "../ui/Rfield";
 import { DollarSign, Percent, Calculator } from "lucide-react";
+import { PurchaseHeaderData } from "./PurchaseHeader";
 
 export interface TaxDiscountData {
   vatPercentage: number;
@@ -72,8 +81,9 @@ export const TaxDiscountForm: React.FC<TaxDiscountFormProps> = ({
               name="vatAmount"
               control={control}
               render={({ field }) => (
-                <Rfield
+                <Rfield<InputNumberProps, { vatAmount: number }, "vatAmount">
                   as={InputNumber}
+                  //@ts-ignore
                   field={field}
                   error={errors.vatAmount?.message}
                   placeholder="0.00"
@@ -81,6 +91,7 @@ export const TaxDiscountForm: React.FC<TaxDiscountFormProps> = ({
                   prefix="৳"
                   step={0.01}
                   readOnly
+                  type="text"
                 />
               )}
             />
@@ -97,6 +108,7 @@ export const TaxDiscountForm: React.FC<TaxDiscountFormProps> = ({
               render={({ field }) => (
                 <Rfield
                   as={InputNumber}
+                  //@ts-ignore
                   field={field}
                   error={errors.discountPercentage?.message}
                   placeholder="0"
@@ -121,6 +133,7 @@ export const TaxDiscountForm: React.FC<TaxDiscountFormProps> = ({
               render={({ field }) => (
                 <Rfield
                   as={InputNumber}
+                  //@ts-ignore
                   field={field}
                   error={errors.discountAmount?.message}
                   placeholder="0.00"

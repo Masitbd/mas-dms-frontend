@@ -1,16 +1,18 @@
 "use client";
 import { PurchaseInterface } from "@/components/medicine-purchese/PurcheseInterface";
 import { ENUM_MODE } from "@/enums/EnumMode";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
 
 const NewPurchase = () => {
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-  const mode = searchParams.get("mode");
+  const { id, mode } = useParams();
+
   return (
     <div>
-      <PurchaseInterface id={id ?? ""} mode={mode ?? ENUM_MODE.NEW} />
+      <PurchaseInterface
+        id={(id ?? "") as string}
+        mode={(mode ?? ENUM_MODE.NEW) as string}
+      />
     </div>
   );
 };
