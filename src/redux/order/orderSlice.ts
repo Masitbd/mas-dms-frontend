@@ -9,7 +9,7 @@ export interface IMedicineSale {
   quantity: number;
   unit_price: number;
   price: number;
-
+  batchNo: string;
   total_price: number;
   discount: number;
   discount_type: string;

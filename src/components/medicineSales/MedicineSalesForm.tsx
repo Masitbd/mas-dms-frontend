@@ -172,6 +172,7 @@ const MedicienSalesForm = ({
       quantity: qty,
       unit_price: item?.price,
       item: item,
+      batchNo: item?.batchNo,
       medicineId: item?._id,
       discount: item?.discount ?? 0,
       isVat: item?.isVat,
