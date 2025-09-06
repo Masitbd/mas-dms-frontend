@@ -96,7 +96,7 @@ const PatientDuePage = () => {
 
         {data && data?.data && (
           <DueCollectionStatementTable
-            data={data.data?.[0]}
+            data={data.data}
             startDate={formValue.startDate}
             endDate={formValue.endDate}
           />
