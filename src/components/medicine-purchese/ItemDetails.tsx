@@ -135,9 +135,7 @@ export const ItemDetailsForm: React.FC<ItemDetailsFormProps> = ({
 
   const onSubmit = (data: ItemDetailData) => {
     const baseAmount = data.quantity * data.purchaseRate;
-    const vatAmount = (baseAmount * data.vat) / 100;
-    const discountAmount = (baseAmount * data.discount) / 100;
-    const amount = baseAmount + vatAmount - discountAmount;
+    const amount = baseAmount;
 
     const itemData: Omit<PurchaseDetailItem, "id"> = {
       ...data,

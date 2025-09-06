@@ -1,5 +1,10 @@
 import { Divider, Panel, Stack } from "rsuite";
-import { MedicineItem, money, Purchase } from "./MedicinePurcheseTypes";
+import {
+  calculateInvoiceTotals,
+  MedicineItem,
+  money,
+  Purchase,
+} from "./MedicinePurcheseTypes";
 import {
   Calculator,
   CircleDollarSign,
@@ -8,23 +13,32 @@ import {
   Percent,
   Wallet,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const PurchaseTotals: React.FC<{
   purchase: Purchase;
   items: MedicineItem[];
   currencyCode?: string;
 }> = ({ purchase, items, currencyCode = "AUD" }) => {
-  const baseFromItems = (items ?? []).reduce(
-    (sum, it) => sum + (it.quantity ?? 0) * (it.purchaseRate ?? 0),
-    0
-  );
-  const base =
-    (items?.length ?? 0) > 0 ? baseFromItems : purchase?.totalAmount ?? 0;
-  const vatAmt = base * ((purchase?.vatPercentage ?? 0) / 100);
-  const discountAmt = base * ((purchase?.discountPercentage ?? 0) / 100);
-  const grandTotal = base + vatAmt - discountAmt;
+  const [amounts, setAmounts] = useState({
+    NetPayable: 0,
+    TotalAmount: 0,
+    TotalDiscount: 0,
+    TotalVat: 0,
+  });
+
+  useEffect(() => {
+    const amounts = calculateInvoiceTotals(
+      items,
+      purchase?.discountPercentage,
+      purchase?.vatPercentage
+    );
+
+    setAmounts(amounts);
+  }, [purchase, items]);
+
   const paid = purchase?.paidAmount ?? 0;
-  const due = Math.max(0, grandTotal - paid);
+  const due = Math.max(0, amounts.TotalAmount - paid);
 
   return (
     <Panel
@@ -36,24 +50,24 @@ export const PurchaseTotals: React.FC<{
         <TotalLine
           icon={<Calculator size={14} aria-hidden />}
           label="Subtotal"
-          value={money(base, currencyCode)}
+          value={money(amounts.TotalAmount, currencyCode)}
         />
         <TotalLine
           icon={<Percent size={14} aria-hidden />}
           label={`VAT (${purchase?.vatPercentage ?? 0}%)`}
-          value={money(vatAmt, currencyCode)}
+          value={money(amounts.TotalVat, currencyCode)}
         />
         <TotalLine
           icon={<Minus size={14} aria-hidden />}
           label={`Discount (${purchase?.discountPercentage ?? 0}%)`}
-          value={"-" + money(discountAmt, currencyCode)}
+          value={"-" + money(amounts.TotalDiscount, currencyCode)}
         />
         <TotalLine
           icon={<CircleDollarSign size={14} aria-hidden />}
           label={<span className="font-medium">Grand Total</span>}
           value={
             <span className="font-medium">
-              {money(grandTotal, currencyCode)}
+              {money(amounts.NetPayable, currencyCode)}
             </span>
           }
           emphasize
