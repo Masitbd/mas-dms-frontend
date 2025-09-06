@@ -94,6 +94,13 @@ const DashSidebar = () => {
                 >
                   Patient Due Statement
                 </Nav.Item>
+                <Nav.Item
+                  eventKey="9-4"
+                  href="/reports/stock-overview"
+                  as={NavLink}
+                >
+                  Medicine Stock Overview
+                </Nav.Item>
 
                 {/*  */}
               </Nav.Menu>
