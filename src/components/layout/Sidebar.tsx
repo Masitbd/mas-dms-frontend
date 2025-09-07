@@ -94,6 +94,20 @@ const DashSidebar = () => {
                 >
                   Patient Due Statement
                 </Nav.Item>
+                <Nav.Item
+                  eventKey="9-5"
+                  href="/reports/stock-overview"
+                  as={NavLink}
+                >
+                  Medicine Stock Overview
+                </Nav.Item>
+                <Nav.Item
+                  eventKey="9-6"
+                  href="/reports/medicine-profit-loss"
+                  as={NavLink}
+                >
+                  Medicine Profit Loss Statement
+                </Nav.Item>
 
                 {/*  */}
               </Nav.Menu>

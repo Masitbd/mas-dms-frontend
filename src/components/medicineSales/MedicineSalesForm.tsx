@@ -36,8 +36,9 @@ import {
   setItemDiscount,
   updateBillDetails,
 } from "@/redux/order/orderSlice";
-import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
+
 import { useSession } from "next-auth/react";
+import { useGetMedicinesWithStockQuery } from "@/redux/api/medicines/medicine.api";
 
 interface CategoryFormProps {
   defaultValues?: Partial<ISaleFormData>;
@@ -100,7 +101,7 @@ const MedicienSalesForm = ({
     data: medicineitems,
     isLoading,
     isFetching,
-  } = useGetMedicinesQuery(queryParams);
+  } = useGetMedicinesWithStockQuery(queryParams);
 
   useEffect(() => {
     if (defaultValues) {
@@ -169,8 +170,9 @@ const MedicienSalesForm = ({
     }
     const data = {
       quantity: qty,
-      unit_price: item?.salesRate,
+      unit_price: item?.price,
       item: item,
+      batchNo: item?.batchNo,
       medicineId: item?._id,
       discount: item?.discount ?? 0,
       isVat: item?.isVat,
@@ -378,11 +380,13 @@ const MedicienSalesForm = ({
                   searchable
                   block
                   placeholder={"Item name"}
-                  data={medicineitems?.data?.data?.map((cd: IMedicineSale) => ({
-                    label: cd?.name,
-                    value: cd?._id,
-                    children: cd,
-                  }))}
+                  data={medicineitems?.data?.[0]?.data?.map(
+                    (cd: IMedicineSale) => ({
+                      label: cd?.name,
+                      value: cd?._id,
+                      children: cd,
+                    })
+                  )}
                   onSelect={(v, v1, v2) =>
                     selectHandler(v1?.children as unknown as IMedicineSale)
                   }
@@ -408,12 +412,7 @@ const MedicienSalesForm = ({
               </div>
               <div>
                 <h2>Rate</h2>
-                <Input
-                  size="sm"
-                  type="number"
-                  value={item?.salesRate}
-                  disabled
-                />
+                <Input size="sm" type="number" value={item?.price} disabled />
               </div>
               <div className="">
                 <br />
@@ -433,7 +432,7 @@ const MedicienSalesForm = ({
               <Table bordered cellBordered height={230} data={state?.medicines}>
                 <Column flexGrow={1}>
                   <HeaderCell children="M. Category" />
-                  <Cell>{(rowData) => rowData?.item?.category?.name}</Cell>
+                  <Cell>{(rowData) => rowData?.item?.category}</Cell>
                 </Column>
                 <Column flexGrow={3}>
                   <HeaderCell children="M. Name" />

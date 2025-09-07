@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetSingleMedicineSalesQuery } from "@/redux/api/medicines/sales.api";
+import { usePostDueCollectionMutation } from "@/redux/api/transaction/transaction.api";
 import {
   ArrowLeft,
   Calendar,
@@ -12,9 +13,12 @@ import {
   Pill,
   DollarSign,
   Percent,
+  Loader2,
 } from "lucide-react";
-import { useParams } from "next/navigation";
-import { Button, Card } from "rsuite";
+
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button, Card, Message, toaster } from "rsuite";
 
 type TMedicine = {
   medicineId: {
@@ -44,6 +48,9 @@ const getPatientTypeBadge = (type: string) => {
 };
 
 const SingleMedicineSalesPage = () => {
+  const router = useRouter();
+  const [paid, setPaid] = useState<number>(0);
+
   const { id } = useParams();
   const { data: singleSales, isLoading } = useGetSingleMedicineSalesQuery(
     id as string,
@@ -52,7 +59,32 @@ const SingleMedicineSalesPage = () => {
     }
   );
 
-  const onBack = () => {};
+  const onBack = () => {
+    router.push("/medicine-sale");
+  };
+
+  const [postDueCollection, { isLoading: isPosting }] =
+    usePostDueCollectionMutation();
+
+  const handelPost = async () => {
+    if (singleSales?.data?.due === 0) {
+      toaster.push(<Message type="error">No Due Now</Message>);
+      return;
+    }
+    const payload = {
+      paid: Number(paid),
+      invoice_no: singleSales?.data?.invoice_no,
+    };
+    try {
+      const res = await postDueCollection(payload).unwrap();
+      if (res.success) {
+        toaster.push(<Message type="success">Posted Sucessfully</Message>);
+        setPaid(0);
+      }
+    } catch (err) {
+      toaster.push(<Message type="error">Something went wrong</Message>);
+    }
+  };
 
   return (
     <div className="space-y-6 p-10">
@@ -73,7 +105,7 @@ const SingleMedicineSalesPage = () => {
               : "general"
           )}
           <div className="text-2xl font-bold text-green-600">
-            ৳{singleSales?.data?.paymentId?.totalBill.toLocaleString()}
+            ৳{singleSales?.data?.totalBill}
           </div>
         </div>
       </div>
@@ -161,7 +193,7 @@ const SingleMedicineSalesPage = () => {
               </label>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-gray-400" />
-                {/* <p>{format(new Date(singleSales?.data?.transaction_date), "PPP")}</p> */}
+                <p>{singleSales?.data?.transaction_date?.slice(0, 10)}</p>
               </div>
             </div>
 
@@ -197,34 +229,52 @@ const SingleMedicineSalesPage = () => {
             <div className="flex justify-between border-b border-gray-300 pb-1.5">
               <span className="text-gray-600">Subtotal:</span>
               <span className="font-semibold">
-                ৳{singleSales?.data?.paymentId?.totalBill}
+                ৳{singleSales?.data?.totalBill}
               </span>
             </div>
 
-            {singleSales?.data?.paymentId?.totalDiscount > 0 && (
+            {singleSales?.data?.totalDiscount > 0 && (
               <div className="flex justify-between text-red-600">
                 <span>Total Discount:</span>
                 <span>
                   -৳
-                  {singleSales?.data?.paymentId?.totalDiscount.toLocaleString()}
+                  {singleSales?.data?.totalDiscount}
                 </span>
               </div>
             )}
 
             {/* <Separator /> */}
 
-            <div className="flex justify-between text-lg font-bold">
+            <div className="flex justify-between text-lg font-bold border-b border-gray-300">
               <span>Total Amount:</span>
-              <span className="text-green-600">
-                ৳{singleSales?.data?.paymentId?.netPayable.toLocaleString()}
-              </span>
+              <span className="">৳{singleSales?.data?.netPayable}</span>
+            </div>
+            <div className="flex justify-between text-lg ">
+              <span>Total Paid:</span>
+              <span className="text-green-600">৳{singleSales?.data?.paid}</span>
+            </div>
+            <div className="flex justify-between text-lg ">
+              <span>Total Due:</span>
+              <span className="text-red-600">৳{singleSales?.data?.due}</span>
             </div>
 
-            <div className="text-sm text-gray-600">
-              <span className="font-medium">
-                {singleSales?.data?.medicines.length}
-              </span>{" "}
-              medicine(s)
+            <div className="flex justify-between text-lg">
+              <label>Pay Now</label>
+              <input
+                type="number"
+                value={paid}
+                onChange={(e) => setPaid(Number(e.target.value))}
+                className="border border-gray-400 rounded  "
+              />
+            </div>
+            <div className="flex justify-end mt-3.5">
+              <Button
+                appearance="primary"
+                disabled={isPosting || paid === 0}
+                onClick={handelPost}
+              >
+                {isPosting ? <Loader2 className="animate-spin" /> : "Submit"}
+              </Button>
             </div>
           </Card.Body>
         </Card>

@@ -34,6 +34,20 @@ const reportsApi = baseApi.injectEndpoints({
       }),
       providesTags: ["single-medicine"],
     }),
+    getMedicineStockOverview: build.query({
+      query: (args) => ({
+        url: "/reports/medicine-stock",
+        method: "GET",
+        params: args,
+      }),
+    }),
+    getMedicineProfitOverview: build.query({
+      query: (args) => ({
+        url: "/reports/medicine-profit-loss",
+        method: "GET",
+        params: args,
+      }),
+    }),
   }),
 });
 
@@ -42,4 +56,6 @@ export const {
   useGetDueCollectionSummeryReportsQuery,
   useGetMedicinesSalesReportsQuery,
   useGetPatientDueReportsQuery,
+  useGetMedicineStockOverviewQuery,
+  useGetMedicineProfitOverviewQuery,
 } = reportsApi;

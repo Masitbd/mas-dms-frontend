@@ -1,28 +1,25 @@
 "use client";
 
 import { formatDate } from "@/components/medicine-purchese/MedicinePurcheseTypes";
-import DueCollectionStatementTable from "@/components/reports/DueCollectionStatement";
-import { useGetDueCollectionReportsQuery } from "@/redux/api/reports.api";
-
+import MedecineProfitLossTable from "@/components/reports/MedicineProfitLoss";
+import { useGetMedicineProfitOverviewQuery } from "@/redux/api/reports.api";
 import { IFormValues } from "@/types";
 import { useState } from "react";
 import { Button, DatePicker, Form } from "rsuite";
 
-const PatientDuePage = () => {
+const MedicineProfitLossStatementPage = () => {
   const [isSearchEnable, setIsSearchEnable] = useState(false);
   const queryParams: Record<string, any> = {};
 
   // console.log("data", data);
 
   const [formValue, setFormValue] = useState<IFormValues>({
-    branch: "",
     startDate: null,
     endDate: null,
   });
 
   const handleChange = (value: Record<string, any>) => {
     setFormValue({
-      branch: value.branch,
       startDate: value.startDate || null,
       endDate: value.endDate || null,
     });
@@ -43,18 +40,18 @@ const PatientDuePage = () => {
     }
   };
 
-  const { data, isLoading } = useGetDueCollectionReportsQuery(queryParams, {
+  const { data, isLoading } = useGetMedicineProfitOverviewQuery(queryParams, {
     skip: !isSearchEnable,
   });
   return (
     <div>
       <h2 className="text-center text-xl font-semibold mt-5 px-5 py-2 bg-blue-600 text-gray-100 w-full max-w-80 mx-auto rounded-xl">
-        Due Collection Statement
+        Medicine Profit Loss Statement
       </h2>
       <div className="px-2 my-5">
         <Form
-          onChange={handleChange}
           onSubmit={handleSubmit}
+          onChange={handleChange}
           formValue={formValue}
           className="grid grid-cols-3 gap-10 justify-items-center  w-full"
         >
@@ -83,7 +80,6 @@ const PatientDuePage = () => {
               }
             />
           </Form.Group>
-
           <Button
             className="max-h-11 mt-5  w-full max-w-md mx-auto"
             size="sm"
@@ -95,7 +91,7 @@ const PatientDuePage = () => {
         </Form>
 
         {data && data?.data && (
-          <DueCollectionStatementTable
+          <MedecineProfitLossTable
             data={data.data}
             startDate={formValue.startDate}
             endDate={formValue.endDate}
@@ -106,4 +102,4 @@ const PatientDuePage = () => {
   );
 };
 
-export default PatientDuePage;
+export default MedicineProfitLossStatementPage;

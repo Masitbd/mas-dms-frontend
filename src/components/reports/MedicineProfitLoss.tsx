@@ -7,26 +7,13 @@ import "pdfmake/build/vfs_fonts";
 import { formatDate } from "@/utils/formateDate";
 import ReporetHeader from "@/utils/ReporetHeader";
 
-export type TBranch = {
-  _id: string;
-  name: string;
-  address1: string;
-  phone: string;
-  vatNo: string;
-};
-
 type TDailyCollection = {
   _id: string;
-  totalBill: number;
-
-  totalDiscount: number;
-
-  netPayable: number;
-  totalDue: number;
-  totalPaid: number;
-  invoice_no: string;
-  createdAt: string;
-  paid: number;
+  name: string;
+  qty: number;
+  salesRate: number;
+  discount: number;
+  purchaseRate: number;
 };
 
 type TPaymentModeSummary = {
@@ -47,20 +34,17 @@ type TTotal = {
 };
 
 type TDailySalesSummery = {
-  data: {
-    grandTotal: number;
-    records: TDailyCollection[];
-  };
+  data: TDailyCollection[];
+
   startDate: Date | null;
   endDate: Date | null;
 };
 
-const DueCollectionStatementTable: React.FC<TDailySalesSummery> = ({
+const MedecineProfitLossTable: React.FC<TDailySalesSummery> = ({
   data,
   startDate,
   endDate,
 }) => {
-  console.log(data, "in table due state");
   const formattedStartDate = formatDate(startDate);
   const formattedEndDate = formatDate(endDate);
 
@@ -100,7 +84,7 @@ const DueCollectionStatementTable: React.FC<TDailySalesSummery> = ({
         // },
 
         {
-          text: `Due Collection Statement: ${
+          text: `Medicine Profit Loss Statement: ${
             formattedStartDate === formattedEndDate
               ? formattedStartDate
               : `from ${formattedStartDate} to ${formattedEndDate}`
@@ -117,59 +101,45 @@ const DueCollectionStatementTable: React.FC<TDailySalesSummery> = ({
           table: {
             headerRows: 1, // Specify the number of header rows
 
-            widths: ["*", "*", "*", "*", "*", "*", "*"], // Adjust column widths as needed
+            widths: ["*", "*", "*", "*", "*", "*", "*", "*", "*"], // Adjust column widths as needed
             body: [
               // Define the header row
               [
-                { text: "Invoice No", bold: true, alignment: "center" },
+                { text: "Particulars", bold: true, alignment: "center" },
 
-                { text: "Date", bold: true, alignment: "center" },
+                { text: "Qty", bold: true, alignment: "center" },
 
-                { text: "Total Bill", bold: true, alignment: "center" },
+                { text: "S.Rate", bold: true, alignment: "center" },
 
-                { text: "Net Payable", bold: true, alignment: "center" },
-                { text: "Total Paid", bold: true, alignment: "center" },
-                { text: "Total Due", bold: true, alignment: "center" },
-                { text: "Paid", bold: true, alignment: "center" },
+                { text: "Total Amount", bold: true, alignment: "center" },
+                { text: "P.Rate", bold: true, alignment: "center" },
+                { text: "Discount", bold: true, alignment: "center" },
+                { text: "Net Amount", bold: true, alignment: "center" },
+                { text: "T. PRate", bold: true, alignment: "center" },
+                { text: "Net Profit", bold: true, alignment: "center" },
               ],
               // Define the data rows
-              ...data?.records?.map((paymentGroup) =>
+              ...data?.map((item) =>
                 [
-                  paymentGroup?.invoice_no || "N/A",
+                  item?.name || "N/A",
 
-                  paymentGroup?.createdAt?.slice(0, 10) || "N/A",
+                  item?.qty,
 
-                  paymentGroup?.totalBill || 0,
+                  item?.salesRate || 0,
 
-                  paymentGroup?.netPayable?.toFixed(2) || "0.00",
-                  paymentGroup?.totalPaid || 0,
-                  paymentGroup?.totalDue || 0,
-                  paymentGroup?.paid || 0,
+                  item?.salesRate * Number(item?.qty),
+                  item?.purchaseRate || 0,
+                  item?.discount || 0,
+                  item?.salesRate * item?.qty - item?.discount,
+                  item?.purchaseRate * item?.qty,
+                  item?.purchaseRate * item?.qty - item?.salesRate * item?.qty,
                 ].map((text) => ({ text, alignment: "center" }))
               ),
             ],
           },
-          // Use predefined border styles
         },
 
         // Total Summary
-        {
-          table: {
-            widths: ["*", "*", "*", "*", "*", "*", "*"],
-            body: [
-              [
-                { text: "Total Sales Amount", bold: true, alignment: "center" },
-                { text: "", bold: true, alignment: "center" },
-                { text: "", bold: true, alignment: "center" },
-                { text: "", bold: true, alignment: "center" },
-                { text: "", bold: true, alignment: "center" },
-                { text: "", bold: true, alignment: "center" },
-                { text: data?.grandTotal, bold: true, alignment: "center" },
-              ].map((text) => ({ text, alignment: "center" })),
-            ],
-          },
-          margin: [0, 10, 0, 0],
-        },
 
         // Payment Mode Summary
       ],
@@ -197,7 +167,7 @@ const DueCollectionStatementTable: React.FC<TDailySalesSummery> = ({
     <div className="p-5">
       <ReporetHeader
         data={data}
-        name="Sales Report Summery"
+        name="Medicine Profit Loss Statement"
         startDate={startDate}
         endDate={endDate}
       />
@@ -211,38 +181,42 @@ const DueCollectionStatementTable: React.FC<TDailySalesSummery> = ({
       </div>
 
       <div className="w-full">
-        <div className="grid grid-cols-7 bg-gray-100 font-semibold text-center p-2">
-          <div>Invoice</div>
-          <div>Bill Date</div>
+        <div className="grid grid-cols-9 bg-gray-400 font-semibold text-center p-2">
+          <div>Particulars</div>
+          <div>Qty</div>
 
-          <div>Total Bill</div>
+          <div>S.Rate</div>
 
-          <div>Net Payable</div>
-          <div>Total Paid</div>
+          <div>T. Amount</div>
+          <div>P.Rate</div>
 
-          <div>Due</div>
-          <div>Paid</div>
+          <div>Discount</div>
+          <div>Net Amount</div>
+          <div>T.PRate</div>
+          <div>Net Profit</div>
         </div>
 
-        {data?.records?.length > 0 ? (
-          data?.records?.map((paymentGroup, paymentIndex) => (
+        {data?.length > 0 ? (
+          data?.map((item, paymentIndex) => (
             <div
               key={paymentIndex}
-              className="grid grid-cols-7 text-center p-2 border-b"
+              className={`grid grid-cols-9 text-center p-2 border-b ${
+                paymentIndex % 2 !== 0 && "bg-slate-200"
+              } `}
             >
-              <div className="text-green-600 font-semibold">
-                {paymentGroup?.invoice_no}
-              </div>
-              <div className=" font-semibold">
-                {paymentGroup?.createdAt?.slice(0, 10)}
-              </div>
+              <div className=" font-semibold">{item?.name}</div>
+              <div className=" font-semibold">{item?.qty}</div>
 
-              <div>{paymentGroup?.totalBill || 0}</div>
+              <div>{item?.salesRate}</div>
 
-              <div>{paymentGroup?.netPayable?.toFixed(2) || 0}</div>
-              <div>{paymentGroup?.totalPaid || 0}</div>
-              <div>{paymentGroup?.totalDue || 0}</div>
-              <div>{paymentGroup?.paid || 0}</div>
+              <div>{item?.salesRate * Number(item?.qty)}</div>
+              <div>{item?.purchaseRate}</div>
+              <div>{item?.discount}</div>
+              <div>{item?.salesRate * item?.qty - item?.discount}</div>
+              <div>{item?.purchaseRate * item?.qty}</div>
+              <div>
+                {item?.salesRate * item?.qty - item?.purchaseRate * item?.qty}
+              </div>
             </div>
           ))
         ) : (
@@ -250,15 +224,9 @@ const DueCollectionStatementTable: React.FC<TDailySalesSummery> = ({
             No Data Found
           </p>
         )}
-
-        <div className="grid grid-cols-7 border-b font-bold ">
-          <div className="col-span-6">Total Amount</div>
-
-          <div className="text-center">{data?.grandTotal}</div>
-        </div>
       </div>
     </div>
   );
 };
 
-export default DueCollectionStatementTable;
+export default MedecineProfitLossTable;

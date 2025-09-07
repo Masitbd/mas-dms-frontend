@@ -71,7 +71,7 @@ const MedicineEntryForm = ({
       openingBalance: 0,
       openingBalanceDate: undefined,
       openingBalanceRate: 0,
-      salesRate: 0,
+
       discount: 0,
       alertQty: 0,
       ...defaultValues,
@@ -90,7 +90,7 @@ const MedicineEntryForm = ({
       openingBalance: 0,
       openingBalanceDate: undefined,
       openingBalanceRate: 0,
-      salesRate: 0,
+
       discount: 0,
       alertQty: 0,
     });
@@ -112,7 +112,7 @@ const MedicineEntryForm = ({
       reOrderLevel,
       openingBalance,
       openingBalanceRate,
-      salesRate,
+
       alertQty,
       ...rest
     } = data;
@@ -121,7 +121,7 @@ const MedicineEntryForm = ({
       reOrderLevel: Number(reOrderLevel.toString()),
       openingBalance: Number(openingBalance.toString()),
       openingBalanceRate: Number(openingBalanceRate.toString()),
-      salesRate: Number(salesRate.toString()),
+
       alertQty: Number(alertQty.toString()),
     };
     try {
@@ -206,7 +206,7 @@ const MedicineEntryForm = ({
                     placeholder="Select Generic Name"
                     data={generics?.data?.map((generic: TIdName) => ({
                       label: generic.name,
-                      value: generic._id,
+                      value: generic.name,
                     }))}
                     block
                     size="lg"
@@ -396,32 +396,6 @@ const MedicineEntryForm = ({
                       <>
                         <BanknoteArrowUp className="w-4 h-4" />
                         Opening Balance Rate
-                      </>
-                    }
-                  />
-                )}
-              />
-            </Col>
-
-            <Col className="my-2.5" xs={12}>
-              <Controller
-                name="salesRate"
-                control={control}
-                rules={{
-                  required: "Sales rate is required",
-                }}
-                render={({ field }) => (
-                  <Rfield<InputProps, TMedicineEntry, "salesRate">
-                    as={Input}
-                    field={field}
-                    placeholder="Sales Rate"
-                    size="lg"
-                    type="number"
-                    disabled={mode === ENUM_MODE.VIEW}
-                    label={
-                      <>
-                        <BanknoteArrowUp className="w-4 h-4" />
-                        Sales Rate
                       </>
                     }
                   />

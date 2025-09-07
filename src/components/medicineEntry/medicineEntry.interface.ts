@@ -11,7 +11,7 @@ export type TMedicineEntry = {
   openingBalance: number;
   openingBalanceDate: Date;
   openingBalanceRate: number;
-  salesRate: number;
+
   discount?: number;
   alertQty: number;
 };
@@ -31,7 +31,7 @@ export const medicineZodSchema = z.object({
   openingBalanceRate: z.number({
     required_error: "openingBalanceRate is required",
   }),
-  salesRate: z.number({ required_error: "salesRate is required" }),
+
   discount: z.number().optional(),
   alertQty: z.number({ required_error: "alertQty is required" }),
 });
