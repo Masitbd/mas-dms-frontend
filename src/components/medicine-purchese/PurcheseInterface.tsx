@@ -12,7 +12,7 @@ import {
   useLazyGetSinglePurchasesQuery,
   useUpdatePurchasesMutation,
 } from "@/redux/api/purchase/purchase.api";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ENUM_MODE } from "@/enums/EnumMode";
 import { defaultValues, useValueChange } from "./MedicinePurcheseTypes";
 import Loading from "../layout/Loading";
@@ -21,13 +21,11 @@ type FormSubmitter = (
   formValue: Record<string, any> | null,
   event?: FormEvent<HTMLFormElement>
 ) => void;
-export const PurchaseInterface = ({
-  id,
-  mode,
-}: {
-  id: string;
-  mode: string;
-}) => {
+export const PurchaseInterface = () => {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const mode = searchParams.get("mode");
+
   const [editingItem, setEditingItem] = useState<PurchaseDetailItem | null>(
     null
   );
