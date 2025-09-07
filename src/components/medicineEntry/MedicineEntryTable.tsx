@@ -10,14 +10,20 @@ type ITableProps = {
   isLoading: boolean;
   data: {
     data: any[];
-  };
+  }[];
 };
 const MedicineEntryTable = ({ data, isLoading }: ITableProps) => {
   const { Cell, Column, HeaderCell } = Table;
 
   return (
     <div>
-      <Table data={data?.data} loading={isLoading} autoHeight hover bordered>
+      <Table
+        data={data?.[0]?.data}
+        loading={isLoading}
+        autoHeight
+        hover
+        bordered
+      >
         <Column flexGrow={1}>
           <HeaderCell>Medicine ID</HeaderCell>
           <Cell dataKey="medicineId" />
@@ -30,12 +36,12 @@ const MedicineEntryTable = ({ data, isLoading }: ITableProps) => {
 
         <Column flexGrow={2}>
           <HeaderCell>Gen Name</HeaderCell>
-          <Cell>{(rowData) => rowData.genericName?.name || "N/A"}</Cell>
+          <Cell>{(rowData) => rowData.genericName || "N/A"}</Cell>
         </Column>
 
         <Column flexGrow={3}>
           <HeaderCell>Category</HeaderCell>
-          <Cell>{(rowData) => rowData.category?.name || "N/A"}</Cell>
+          <Cell>{(rowData) => rowData.category || "N/A"}</Cell>
         </Column>
 
         <Column flexGrow={1.5}>
