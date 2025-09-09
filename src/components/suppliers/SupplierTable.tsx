@@ -27,8 +27,8 @@ const SupplierTable = ({ data, isLoading }: ITableProps) => {
         </Column>
 
         <Column flexGrow={2}>
-          <HeaderCell>Contact Peon</HeaderCell>
-          <Cell dataKey="contactPeon" />
+          <HeaderCell>Contact Person</HeaderCell>
+          <Cell dataKey="contactPerson" />
         </Column>
 
         <Column flexGrow={3}>
