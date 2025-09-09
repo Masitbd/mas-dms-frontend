@@ -108,6 +108,13 @@ const DashSidebar = () => {
                 >
                   Medicine Profit Loss Statement
                 </Nav.Item>
+                <Nav.Item
+                  eventKey="9-7"
+                  href="/reports/supplier-wise-purchase"
+                  as={NavLink}
+                >
+                  Supplier Wise Purchase Statement
+                </Nav.Item>
 
                 {/*  */}
               </Nav.Menu>
