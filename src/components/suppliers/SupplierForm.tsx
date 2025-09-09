@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Controller, useForm, UseFormReset } from "react-hook-form";
-import { Button, Col,  Grid, Input, InputProps, Row } from "rsuite";
+import { Button, Col, Grid, Input, InputProps, Row } from "rsuite";
 
 import { Rfield } from "../ui/Rfield";
 import {
@@ -32,7 +32,7 @@ const SupplierForm = ({
   defaultValues,
   loading,
   submitHandler,
-  
+
   mode,
 }: SupplierFormProps) => {
   const {
@@ -50,7 +50,7 @@ const SupplierForm = ({
       fax: "",
       city: "",
       country: "",
-      email: "",
+      email: undefined,
       ...defaultValues,
     },
     resolver: zodResolver(supplierZodSchema),
@@ -67,7 +67,7 @@ const SupplierForm = ({
       fax: "",
       city: "",
       country: "",
-      email: "",
+      email: undefined,
     });
     routes.push("/supplier");
   };

@@ -4,7 +4,7 @@ export const supplierZodSchema = z.object({
   supplierId: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   contactPerson: z.string().min(1, "Contact person is required"),
-  address: z.string().min(1, "Address is required"),
+  address: z.string().optional(),
   phone: z.string().min(1, "Phone is required"),
   fax: z.string().optional(),
   city: z.string().optional(),
