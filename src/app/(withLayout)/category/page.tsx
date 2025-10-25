@@ -13,7 +13,6 @@ const Category = () => {
     isLoading,
     isFetching,
   } = useGetCategoriesQuery(query);
-  console.log(categoryData);
   return (
     <div>
       <div className="my-2">

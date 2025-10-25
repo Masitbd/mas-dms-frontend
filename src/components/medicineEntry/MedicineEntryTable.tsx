@@ -19,7 +19,7 @@ const MedicineEntryTable = ({ data, isLoading }: ITableProps) => {
     <div>
       <Table data={data?.data} loading={isLoading} autoHeight hover bordered>
         <Column flexGrow={1}>
-          <HeaderCell>Medicine ID</HeaderCell>
+          <HeaderCell>ID</HeaderCell>
           <Cell dataKey="medicineId" />
         </Column>
 
@@ -43,28 +43,21 @@ const MedicineEntryTable = ({ data, isLoading }: ITableProps) => {
           <Cell dataKey="unit" />
         </Column>
 
-        <Column flexGrow={1.5}>
-          <HeaderCell>Sales Rate</HeaderCell>
-          <Cell dataKey="price" />
-        </Column>
-        <Column flexGrow={1.5}>
-          <HeaderCell>Discount</HeaderCell>
-          <Cell dataKey="discount" />
-        </Column>
-
         <Column flexGrow={2}>
           <HeaderCell>Action</HeaderCell>
           <Cell>
             {(rowData: TMedicineEntry) => (
               <div className="flex gap-3 justify-center">
                 <Link
-                  href={`/supplier/${rowData.medicineId}?mode=${ENUM_MODE.VIEW}`}
+                  href={`/medicine-entry/${rowData._id}?mode=${ENUM_MODE.VIEW}`}
                 >
                   <Button appearance="primary" color="blue" size="xs">
                     <Eye className="w-4 h-4" />
                   </Button>
                 </Link>
-                <Link href={`/supplier/${rowData.medicineId}`}>
+                <Link
+                  href={`/medicine-entry/create?id=${rowData._id}&mode=${ENUM_MODE.UPDATE}`}
+                >
                   <Button appearance="primary" color="green" size="xs">
                     <Pencil className="w-4 h-4" />
                   </Button>

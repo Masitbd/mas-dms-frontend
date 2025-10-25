@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export type TMedicineEntry = {
+  _id: any;
   medicineId?: string;
   name: string;
   genericName: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm, UseFormReset } from "react-hook-form";
 import {
   Button,
@@ -35,16 +35,23 @@ import { TIdName, TMedicineEntry } from "./medicineEntry.interface";
 import { useGetCategoriesQuery } from "@/redux/api/categories/category.api";
 import { useGetGenericsQuery } from "@/redux/api/generics/generic.api";
 import { useGetSuppliersQuery } from "@/redux/api/suppliers/supplier.api";
+import {
+  useLazyGetSingleMedicineQuery,
+  useUpdateMedicineMutation,
+} from "@/redux/api/medicines/medicine.api";
+import Loading from "../layout/Loading";
 
 interface SupplierFormProps {
   defaultValues?: Partial<TMedicineEntry>;
   loading?: boolean;
   submitHandler: (
     props: TMedicineEntry,
-    reset: UseFormReset<TMedicineEntry>
+    reset: UseFormReset<TMedicineEntry>,
+    mode: string
   ) => void;
   isSuccess: boolean;
   mode?: ENUM_MODE;
+  searchParams: any;
 }
 
 const MedicineEntryForm = ({
@@ -53,7 +60,15 @@ const MedicineEntryForm = ({
   submitHandler,
   isSuccess,
   mode,
+  searchParams,
 }: SupplierFormProps) => {
+  const mode1 = searchParams.get("mode");
+  const medId = searchParams.get("id");
+  const [
+    get,
+    { isLoading: medicineDataLoading, isFetching: medicineDataFetching },
+  ] = useLazyGetSingleMedicineQuery();
+
   const {
     control,
     handleSubmit,
@@ -98,14 +113,30 @@ const MedicineEntryForm = ({
   };
 
   //
+  const [genericSearchData, setGenericSearchData] =
+    useState<Record<string, string>>();
 
-  const { data: generics, isLoading: isGenericLoading } =
-    useGetGenericsQuery(undefined);
-  const { data: categories, isLoading: isCategoryLoading } =
-    useGetCategoriesQuery(undefined);
+  const {
+    data: generics,
+    isLoading: isGenericLoading,
+    isFetching: isGenericFetching,
+  } = useGetGenericsQuery(genericSearchData ?? undefined);
 
-  const { data: suppliers, isLoading: isSupplierLoading } =
-    useGetSuppliersQuery(undefined);
+  const [categorySearchData, setCategorySearchData] =
+    useState<Record<string, string>>();
+  const {
+    data: categories,
+    isLoading: isCategoryLoading,
+    isFetching: isCategoryFetching,
+  } = useGetCategoriesQuery(categorySearchData ?? undefined);
+
+  const [supplierSearchData, setSupplierSearchData] =
+    useState<Record<string, string>>();
+  const {
+    data: suppliers,
+    isLoading: isSupplierLoading,
+    isFetching: isSupplierFetching,
+  } = useGetSuppliersQuery(supplierSearchData ?? undefined);
 
   const onsubmit = async (data: TMedicineEntry) => {
     const {
@@ -125,7 +156,10 @@ const MedicineEntryForm = ({
       alertQty: Number(alertQty.toString()),
     };
     try {
-      mode !== ENUM_MODE.VIEW && submitHandler && submitHandler(payload, reset);
+      mode1 !== ENUM_MODE.VIEW &&
+        submitHandler &&
+        submitHandler(payload, reset, mode1);
+
       mode == ENUM_MODE.VIEW && cancelHandler();
     } catch (error) {
       console.error(error);
@@ -133,13 +167,27 @@ const MedicineEntryForm = ({
   };
 
   useEffect(() => {
-    if (defaultValues) {
-      reset(defaultValues);
+    if (mode1 == ENUM_MODE.UPDATE) {
+      (async function () {
+        const data = await get(medId).unwrap();
+        if (data?.data) {
+          reset({
+            ...data?.data,
+            category: data?.data?.category?._id,
+            supplierName: data?.data?.supplierName?._id,
+            openingBalanceDate: new Date(data?.data?.openingBalanceDate),
+          });
+        }
+      })();
     }
-  }, [defaultValues]);
+  }, [medId, mode1]);
 
   return (
-    <div className="px-7">
+    <div className="px-7 relative">
+      <Loading
+        size="md"
+        loading={medicineDataFetching || medicineDataLoading}
+      />
       <form onSubmit={handleSubmit(onsubmit)}>
         <Grid fluid>
           <Row className="m-4  px-5">
@@ -206,11 +254,15 @@ const MedicineEntryForm = ({
                     placeholder="Select Generic Name"
                     data={generics?.data?.map((generic: TIdName) => ({
                       label: generic.name,
-                      value: generic.name,
+                      value: generic._id,
                     }))}
                     block
                     size="lg"
                     searchable
+                    loading={isGenericFetching || isGenericLoading}
+                    onSearch={(v: string) => {
+                      setGenericSearchData({ searchTerm: v });
+                    }}
                   />
                 )}
               />
@@ -234,12 +286,16 @@ const MedicineEntryForm = ({
                     block
                     size="lg"
                     searchable
+                    onSearch={(v: string) => {
+                      setCategorySearchData({ searchTerm: v });
+                    }}
                     label={
                       <>
                         <ChartBarStacked className="w-4 h-4" />
                         Category
                       </>
                     }
+                    loading={isCategoryFetching || isCategoryLoading}
                   >
                     {/* Replace with real options */}
                   </Rfield>
@@ -271,6 +327,10 @@ const MedicineEntryForm = ({
                         Supplier Name
                       </>
                     }
+                    loading={isSupplierFetching || isSupplierLoading}
+                    onSearch={(v: string) => {
+                      setSupplierSearchData({ searchTerm: v });
+                    }}
                   >
                     {/* Replace with real options */}
                   </Rfield>
@@ -469,7 +529,7 @@ const MedicineEntryForm = ({
             disabled={loading}
             loading={loading}
           >
-            Submit
+            {mode1 == ENUM_MODE.NEW ? "Submit" : "Update"}
           </Button>
         </div>
       </form>

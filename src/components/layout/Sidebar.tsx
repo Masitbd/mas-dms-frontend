@@ -9,6 +9,9 @@ import DateTaskIcon from "@rsuite/icons/DateTask";
 import { useRouter } from "next/navigation";
 
 import { useSession } from "next-auth/react";
+import { ShoppingBag } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 const DashSidebar = () => {
   const navigate = useRouter();
@@ -55,9 +58,24 @@ const DashSidebar = () => {
               <Nav.Item href="/medicine-purchase" eventKey="6" as={NavLink}>
                 Purchase Entry
               </Nav.Item>
+
               <Nav.Item href="/medicine-sale" eventKey="7" as={NavLink}>
                 Sales
               </Nav.Item>
+              <Nav.Menu
+                eventKey="10"
+                trigger="hover"
+                title="Sales"
+                icon={<FontAwesomeIcon icon={faCartShopping} />}
+                placement="rightStart"
+              >
+                <Nav.Item eventKey="10-1" href="/sales/normal/new" as={NavLink}>
+                  Add Sales
+                </Nav.Item>
+                <Nav.Item eventKey="10-1" href="/sales/pos/new" as={NavLink}>
+                  POS
+                </Nav.Item>
+              </Nav.Menu>
               <Nav.Menu
                 eventKey="9"
                 trigger="hover"
