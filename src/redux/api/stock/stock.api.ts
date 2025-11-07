@@ -10,9 +10,9 @@ const stockApi = baseApi.injectEndpoints({
       }),
       providesTags: ["stock"],
     }),
-    getSingleStock: build.query({
+    getSingleStockByMedicineId: build.query({
       query: (id: string) => ({
-        url: `/stock/${id}`,
+        url: `/stock/medicineId/${id}`,
         method: "GET",
       }),
       providesTags: ["single-stock"],

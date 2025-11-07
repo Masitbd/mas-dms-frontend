@@ -11,8 +11,20 @@ type ITableProps = {
   data: {
     data: any[];
   };
+
+  link1?: string;
+  link2?: string;
+  btn1Visibility?: boolean;
+  btn2Visibility?: boolean;
 };
-const MedicineEntryTable = ({ data, isLoading }: ITableProps) => {
+const MedicineEntryTable = ({
+  data,
+  isLoading,
+  btn1Visibility,
+  btn2Visibility,
+  link1,
+  link2,
+}: ITableProps) => {
   const { Cell, Column, HeaderCell } = Table;
 
   return (
@@ -49,14 +61,18 @@ const MedicineEntryTable = ({ data, isLoading }: ITableProps) => {
             {(rowData: TMedicineEntry) => (
               <div className="flex gap-3 justify-center">
                 <Link
-                  href={`/medicine-entry/${rowData._id}?mode=${ENUM_MODE.VIEW}`}
+                  href={`/${link1 ? link1 : "medicine-entry"}/${
+                    rowData._id
+                  }?mode=${ENUM_MODE.VIEW}`}
                 >
                   <Button appearance="primary" color="blue" size="xs">
                     <Eye className="w-4 h-4" />
                   </Button>
                 </Link>
                 <Link
-                  href={`/medicine-entry/create?id=${rowData._id}&mode=${ENUM_MODE.UPDATE}`}
+                  href={`/${link2 ? link2 : "medicine-entry"}/create?id=${
+                    rowData._id
+                  }&mode=${ENUM_MODE.UPDATE}`}
                 >
                   <Button appearance="primary" color="green" size="xs">
                     <Pencil className="w-4 h-4" />

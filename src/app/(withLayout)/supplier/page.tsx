@@ -1,4 +1,5 @@
 "use client";
+import RPagination from "@/components/RPagination";
 import SupplierHeader from "@/components/suppliers/SupplierHeader";
 import SupplierTable from "@/components/suppliers/SupplierTable";
 import useQueryBuilder from "@/helpers/QueryBUilder";
@@ -15,6 +16,14 @@ const Suppliers = () => {
       <SupplierHeader addField={addField} />
       <div className="my-4">
         <SupplierTable data={suppliers?.data} isLoading={isLoading} />
+      </div>
+      <div>
+        <RPagination
+          addField={addField}
+          deleteField={deleteField}
+          query={query}
+          total={suppliers?.meta?.total}
+        />
       </div>
     </div>
   );

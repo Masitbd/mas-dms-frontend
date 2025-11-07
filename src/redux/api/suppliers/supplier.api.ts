@@ -12,9 +12,10 @@ const supplierApi = baseApi.injectEndpoints({
       invalidatesTags: ["supplier-list"],
     }),
     getSuppliers: build.query({
-      query: () => ({
+      query: (query) => ({
         url: "/suppliers",
         method: "GET",
+        params: query,
       }),
       providesTags: ["supplier-list"],
     }),

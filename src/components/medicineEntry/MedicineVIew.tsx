@@ -40,7 +40,9 @@ interface Medicine {
   _id?: string;
   medicineId?: string;
   name?: string;
-  genericName?: string;
+  genericName?: {
+    name: string;
+  };
   category?: Category;
   supplierName?: Supplier;
   reOrderLevel?: number;

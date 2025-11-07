@@ -17,38 +17,13 @@ const SupplierTable = ({ data, isLoading }: ITableProps) => {
     <div>
       <Table data={data} loading={isLoading} autoHeight hover bordered>
         <Column flexGrow={1}>
-          <HeaderCell>Supplier ID</HeaderCell>
+          <HeaderCell> ID</HeaderCell>
           <Cell dataKey="supplierId" />
         </Column>
 
         <Column flexGrow={2}>
           <HeaderCell>Name</HeaderCell>
           <Cell dataKey="name" />
-        </Column>
-
-        <Column flexGrow={2}>
-          <HeaderCell>Contact Peon</HeaderCell>
-          <Cell dataKey="contactPeon" />
-        </Column>
-
-        <Column flexGrow={3}>
-          <HeaderCell>Address</HeaderCell>
-          <Cell dataKey="address" />
-        </Column>
-
-        <Column flexGrow={1.5}>
-          <HeaderCell>Phone</HeaderCell>
-          <Cell dataKey="phone" />
-        </Column>
-
-        <Column flexGrow={1.5}>
-          <HeaderCell>Fax</HeaderCell>
-          <Cell dataKey="fax" />
-        </Column>
-
-        <Column flexGrow={1.5}>
-          <HeaderCell>City</HeaderCell>
-          <Cell dataKey="city" />
         </Column>
 
         <Column flexGrow={1.5}>

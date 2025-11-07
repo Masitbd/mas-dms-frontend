@@ -7,7 +7,22 @@ import useQueryBuilder from "@/helpers/QueryBUilder";
 
 import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
 
-const MedicineListPage = () => {
+const MedicineListPage = ({
+  btn1Visibility,
+  btn2Visibility,
+  link1,
+  link2,
+  link4,
+  btn3Text,
+}: {
+  link1?: string;
+  link2?: string;
+  link3?: string;
+  link4?: string;
+  btn1Visibility?: boolean;
+  btn2Visibility?: boolean;
+  btn3Text?: string;
+}) => {
   const { addField, deleteField, query } = useQueryBuilder();
   const {
     data: medicines,
@@ -17,11 +32,19 @@ const MedicineListPage = () => {
 
   return (
     <div className="p-4">
-      <MedicineEntryHeader addField={addField} />
+      <MedicineEntryHeader
+        addField={addField}
+        link4={link4}
+        btn3Text={btn3Text as string}
+      />
       <div className="my-4">
         <MedicineEntryTable
           data={medicines?.data}
           isLoading={isLoading || isFetching}
+          link1={link1}
+          link2={link2}
+          btn1Visibility={btn1Visibility}
+          btn2Visibility={btn2Visibility}
         />
       </div>
       <div>
