@@ -20,4 +20,5 @@ const stockApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetStocksQuery, useGetSingleStockQuery } = stockApi;
+export const { useGetStocksQuery, useGetSingleStockByMedicineIdQuery } =
+  stockApi;
