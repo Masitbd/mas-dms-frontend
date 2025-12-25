@@ -19,10 +19,7 @@ import { Rfield as Field } from "../ui/Rfield";
 import { Package, Calendar, DollarSign, Percent, Edit } from "lucide-react";
 import { useGetMedicinesQuery } from "@/redux/api/medicines/medicine.api";
 import { useGetSuppliersQuery } from "@/redux/api/suppliers/supplier.api";
-import {
-  useGetSingleStockQuery,
-  useGetStocksQuery,
-} from "@/redux/api/stock/stock.api";
+import { useGetStocksQuery as useGetSingleStockQuery } from "@/redux/api/stock/stock.api";
 import CurrentQuantityDisplay from "./Stock";
 
 export interface ItemDetailData {
