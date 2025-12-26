@@ -5,7 +5,7 @@
 
 import { FinancialDemoPanel } from "./FinancialDemo";
 import { ProductTablePanel } from "./ProductTablePanel";
-import { LineItem, Product } from "./SalesTypes";
+import { LineItem, PaymentMethod, Product } from "./SalesTypes";
 
 export function SalesSection(props: {
   // product ui state
@@ -56,15 +56,23 @@ export function SalesSection(props: {
   // setQtyEdits: (product: Record<string, string>) => void;
 
   // financial demo
-  subtotal: number;
-  discountDraft: string;
-  setDiscountDraft: (v: string) => void;
-  vatPctDraft: string;
-  setVatPctDraft: (v: string) => void;
-  vatAmount: number;
-  grandTotal: number;
+  total: number;
+  vat: number;
+  totalDiscount: number;
+  adjustment: number;
+  netPayable: number;
+
+  extraDiscountDraft: string;
+  setExtraDiscountDraft: (v: string) => void;
+  onCommitExtraDiscount: () => void;
+
+  paymentMethod: PaymentMethod;
+  setPaymentMethod: (v: PaymentMethod) => void;
+
   paidDraft: string;
   setPaidDraft: (v: string) => void;
+  onCommitPaid: () => void;
+
   due: number;
 
   // For product line Discount
@@ -120,17 +128,20 @@ export function SalesSection(props: {
       {/* LEFT: FINANCIAL DEMO */}
       <div className="md:col-span-4">
         <FinancialDemoPanel
-          subtotal={props.subtotal}
-          discountDraft={props.discountDraft}
-          setDiscountDraft={props.setDiscountDraft}
-          vatPctDraft={props.vatPctDraft}
-          setVatPctDraft={props.setVatPctDraft}
-          vatAmount={props.vatAmount}
-          grandTotal={props.grandTotal}
+          total={props.total}
+          vat={props.vat}
+          totalDiscount={props.totalDiscount}
+          adjustment={props.adjustment}
+          netPayable={props.netPayable}
+          extraDiscountDraft={props.extraDiscountDraft}
+          setExtraDiscountDraft={props.setExtraDiscountDraft}
+          onCommitExtraDiscount={props.onCommitExtraDiscount}
+          paymentMethod={props.paymentMethod}
+          setPaymentMethod={props.setPaymentMethod}
           paidDraft={props.paidDraft}
           setPaidDraft={props.setPaidDraft}
+          onCommitPaid={props.onCommitPaid}
           due={props.due}
-          onResetAll={props.onResetAll}
         />
       </div>
     </div>

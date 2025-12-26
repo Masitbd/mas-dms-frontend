@@ -4,119 +4,155 @@
  */
 
 import { RotateCcw } from "lucide-react";
-import { Button, Divider, Input, Panel } from "rsuite";
+import { Button, Divider, Input, InputPicker, Panel } from "rsuite";
 import { money } from "./SalesHelpe";
+import { PaymentMethod } from "./SalesTypes";
+import { useMemo } from "react";
 
 export function FinancialDemoPanel(props: {
-  subtotal: number;
-  discountDraft: string;
-  setDiscountDraft: (v: string) => void;
-  vatPctDraft: string;
-  setVatPctDraft: (v: string) => void;
-  vatAmount: number;
-  grandTotal: number;
+  total: number;
+  vat: number;
+  totalDiscount: number;
+  adjustment: number;
+  netPayable: number;
+
+  extraDiscountDraft: string;
+  setExtraDiscountDraft: (v: string) => void;
+  onCommitExtraDiscount: () => void;
+
+  paymentMethod: PaymentMethod;
+  setPaymentMethod: (v: PaymentMethod) => void;
+
   paidDraft: string;
   setPaidDraft: (v: string) => void;
+  onCommitPaid: () => void;
+
   due: number;
-  onResetAll: () => void;
 }) {
+  const paymentOptions = useMemo(
+    () => [
+      { label: "Cash", value: "cash" },
+      { label: "Card", value: "card" },
+      { label: "Bank", value: "bank" },
+    ],
+    []
+  );
+
   return (
     <Panel
       bordered
       className="w-full rounded-2xl border-slate-200 bg-white"
       header={
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-base font-semibold text-slate-900">
-              Financials
-            </div>
-            <div className="text-xs text-slate-500">
-              Demo section (we will refine later)
-            </div>
+        <div>
+          <div className="text-base font-semibold text-slate-900">
+            Financial
           </div>
-          <Button appearance="ghost" size="sm" onClick={props.onResetAll}>
-            <span className="inline-flex items-center gap-2">
-              <RotateCcw className="h-4 w-4" />
-              Reset All
-            </span>
-          </Button>
+          <div className="text-xs text-slate-500">
+            Compact summary (auto-calculated)
+          </div>
         </div>
       }
     >
-      <div className="space-y-3">
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600">Subtotal</span>
-            <span className="font-semibold text-slate-900">
-              {money(props.subtotal)}
-            </span>
-          </div>
-
-          <div className="mt-2 grid grid-cols-1 gap-2">
-            <div>
-              <div className="mb-1 text-xs font-medium text-slate-600">
-                Discount (amount)
-              </div>
-              <Input
-                value={props.discountDraft}
-                onChange={(v) => props.setDiscountDraft(String(v))}
-                placeholder="0"
-                className="rounded-xl"
-              />
-            </div>
-
-            <div>
-              <div className="mb-1 text-xs font-medium text-slate-600">
-                VAT (%)
-              </div>
-              <Input
-                value={props.vatPctDraft}
-                onChange={(v) => props.setVatPctDraft(String(v))}
-                placeholder="0"
-                className="rounded-xl"
-              />
-              <div className="mt-1 text-xs text-slate-500">
-                VAT amount:{" "}
-                <span className="font-medium text-slate-800">
-                  {money(props.vatAmount)}
-                </span>
-              </div>
-            </div>
-
-            <Divider className="my-2" />
-
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">Grand Total</span>
-              <span className="font-semibold text-slate-900">
-                {money(props.grandTotal)}
-              </span>
-            </div>
-
-            <div>
-              <div className="mb-1 text-xs font-medium text-slate-600">
-                Paid
-              </div>
-              <Input
-                value={props.paidDraft}
-                onChange={(v) => props.setPaidDraft(String(v))}
-                placeholder="0"
-                className="rounded-xl"
-              />
-            </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">Due</span>
-              <span className="font-semibold text-slate-900">
-                {money(props.due)}
-              </span>
-            </div>
-          </div>
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+        {/* 1) Total */}
+        <div className="text-slate-600">Total</div>
+        <div className="text-right font-semibold text-slate-900">
+          {money(props.total)}
         </div>
 
-        <div className="text-xs text-slate-500">
-          Notes: This is a demo financial panel. We will replace with final
-          rules (discount types, VAT rules, rounding, payments, etc.).
+        {/* 2) VAT (from line vat%) */}
+        <div className="text-slate-600">VAT</div>
+        <div className="text-right font-semibold text-slate-900">
+          {money(props.vat)}
         </div>
+
+        {/* 3) Total Discount */}
+        <div className="text-slate-600">Total Discount</div>
+        <div className="text-right font-semibold text-slate-900">
+          {money(props.totalDiscount)}
+        </div>
+
+        {/* 4) Adjustment (auto) */}
+        <div className="text-slate-600">Adjustment</div>
+        <div className="text-right font-semibold text-slate-900">
+          {props.adjustment === 0 ? "0.00" : money(props.adjustment)}
+        </div>
+
+        <Divider className="col-span-2 my-1" />
+
+        {/* 5) Net Payable */}
+        <div className="text-slate-600">Net Payable</div>
+        <div className="text-right text-base font-bold text-slate-900">
+          {money(props.netPayable)}
+        </div>
+
+        {/* 6) Extra discount (cash discount) */}
+        <div className="text-slate-600">Extra Discount</div>
+        <div className="flex justify-end">
+          <Input
+            size="sm"
+            className="w-[140px] rounded-xl text-right"
+            value={props.extraDiscountDraft}
+            onChange={(v) => props.setExtraDiscountDraft(String(v))}
+            onBlur={props.onCommitExtraDiscount}
+            placeholder="0"
+            inputMode="decimal"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                props.onCommitExtraDiscount();
+              }
+            }}
+          />
+        </div>
+
+        {/* 7) Payment Method */}
+        <div className="text-slate-600">Payment Method</div>
+        <div className="flex justify-end">
+          <InputPicker
+            size="sm"
+            cleanable={false}
+            searchable={false}
+            className="w-[140px] rounded-xl"
+            data={paymentOptions}
+            value={props.paymentMethod}
+            onChange={(v) =>
+              props.setPaymentMethod((v as PaymentMethod) ?? "cash")
+            }
+            placeholder="Select"
+          />
+        </div>
+
+        {/* 8) Paid */}
+        <div className="text-slate-600">Paid</div>
+        <div className="flex justify-end">
+          <Input
+            size="sm"
+            className="w-[140px] rounded-xl text-right"
+            value={props.paidDraft}
+            onChange={(v) => props.setPaidDraft(String(v))}
+            onBlur={props.onCommitPaid}
+            placeholder="0"
+            inputMode="decimal"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                props.onCommitPaid();
+              }
+            }}
+          />
+        </div>
+
+        {/* Due */}
+        <div className="text-slate-600">Due</div>
+        <div className="text-right text-base font-bold text-slate-900">
+          {money(props.due)}
+        </div>
+      </div>
+
+      <div className="mt-2 text-[11px] text-slate-500">
+        VAT is computed per line using that line’s VAT%. Extra discount is
+        allocated proportionally to lines to keep VAT consistent.
       </div>
     </Panel>
   );

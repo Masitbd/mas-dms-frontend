@@ -1,6 +1,6 @@
-type PaymentMethod = "cash" | "card" | "bank";
+export type PaymentMethod = "cash" | "card" | "bank";
 
-type Product = {
+export type Product = {
   id: string;
   name: string;
   sku?: string;
@@ -11,7 +11,7 @@ type Product = {
   defaultVatPct?: number; // ✅ NEW (per product default VAT%)
 };
 
-type LineItem = {
+export type LineItem = {
   lineId: string;
   productId: string;
   name: string;

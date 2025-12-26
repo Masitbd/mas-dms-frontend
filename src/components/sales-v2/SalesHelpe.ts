@@ -78,3 +78,13 @@ export function calcNetAmount(args: {
 
   return { gross, discountPctApplied: pct, discountAmount: disc, net, maxPct };
 }
+
+// financial helper
+export function round2(n: number) {
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+
+export function safeNum(n: any, fallback = 0) {
+  const x = Number(n);
+  return Number.isFinite(x) ? x : fallback;
+}

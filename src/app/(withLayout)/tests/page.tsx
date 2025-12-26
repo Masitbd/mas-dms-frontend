@@ -41,6 +41,7 @@ import {
   CustomerMode,
   CustomerSearchOption,
   LineItem,
+  PaymentMethod,
   Product,
   SalesUser,
 } from "@/components/sales-v2/SalesTypes";
@@ -55,6 +56,8 @@ import {
   calcNetAmount,
   clamp,
   discountMaxPct,
+  round2,
+  safeNum,
 } from "@/components/sales-v2/SalesHelpe";
 
 /* ============================================================
@@ -140,6 +143,8 @@ const MOCK_PRODUCTS: Product[] = [
     sku: "MED-001",
     unit: "Box",
     defaultRate: 30,
+    defaultDiscountPct: 0,
+    defaultVatPct: 0,
   },
   {
     id: "p2",
@@ -147,14 +152,26 @@ const MOCK_PRODUCTS: Product[] = [
     sku: "MED-002",
     unit: "Box",
     defaultRate: 45,
+    defaultDiscountPct: 5,
+    defaultVatPct: 5,
   },
-  { id: "p3", name: "Syringe 5ml", sku: "CON-011", unit: "Pc", defaultRate: 8 },
+  {
+    id: "p3",
+    name: "Syringe 5ml",
+    sku: "CON-011",
+    unit: "Pc",
+    defaultRate: 8,
+    defaultDiscountPct: 0,
+    defaultVatPct: 0,
+  },
   {
     id: "p4",
     name: "Glucose Saline 500ml",
     sku: "IV-020",
     unit: "Bag",
     defaultRate: 95,
+    defaultDiscountPct: 2,
+    defaultVatPct: 5,
   },
   {
     id: "p5",
@@ -162,6 +179,8 @@ const MOCK_PRODUCTS: Product[] = [
     sku: "CON-002",
     unit: "Roll",
     defaultRate: 25,
+    defaultDiscountPct: 0,
+    defaultVatPct: 0,
   },
   {
     id: "p6",
@@ -169,9 +188,10 @@ const MOCK_PRODUCTS: Product[] = [
     sku: "CON-005",
     unit: "Bottle",
     defaultRate: 60,
+    defaultDiscountPct: 3,
+    defaultVatPct: 5,
   },
 ];
-
 /* ============================================================
  * 5) MAIN PAGE (ALL STATE LIVES HERE)
  * ============================================================
@@ -413,6 +433,7 @@ export default function SalesPage() {
     });
 
     const lineId = uid("line");
+    const defaultVatPct = clamp(p.defaultVatPct ?? 0, 0, 100);
 
     const li: LineItem = {
       lineId,
@@ -425,6 +446,7 @@ export default function SalesPage() {
       discountDefaultLimitPct: defaultLimit,
       discountPct: discountPctApplied,
       amount: net,
+      vatPct: defaultVatPct,
     };
 
     setLineItems((prev) => [li, ...prev]);
@@ -617,15 +639,99 @@ export default function SalesPage() {
     () => Math.max(subtotal - discount + vatAmount, 0),
     [subtotal, discount, vatAmount]
   );
+  // ------------------------
+  // For Financial SECTION
+  // ------------------------
+  const [extraDiscountDraft, setExtraDiscountDraft] = useState<string>("0"); // cash discount amount
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
+  const total = useMemo(() => {
+    return round2(lineItems.reduce((s, li) => s + safeNum(li.amount, 0), 0));
+  }, [lineItems]);
+
+  const lineDiscountTotal = useMemo(() => {
+    // gross - net for each line
+    const sum = lineItems.reduce((s, li) => {
+      const gross = safeNum(li.qty, 0) * safeNum(li.rate, 0);
+      const net = safeNum(li.amount, 0);
+      const disc = Math.max(gross - net, 0);
+      return s + disc;
+    }, 0);
+    return round2(sum);
+  }, [lineItems]);
+
+  const extraDiscount = useMemo(() => {
+    const raw = safeNum(String(extraDiscountDraft).trim(), 0);
+    return round2(clamp(raw, 0, total)); // cannot exceed total
+  }, [extraDiscountDraft, total]);
+
+  // Allocate extra discount proportionally to line net, to get correct VAT base even if VAT% differs per line.
+  const vat = useMemo(() => {
+    if (lineItems.length === 0) return 0;
+
+    const subtotalNet = total;
+    if (subtotalNet <= 0) return 0;
+
+    const extra = extraDiscount;
+
+    const sumVat = lineItems.reduce((s, li) => {
+      const net = safeNum(li.amount, 0);
+      const share = net / subtotalNet; // safe since subtotalNet > 0
+      const netAfterExtra = Math.max(net - extra * share, 0);
+
+      const vatPct = clamp(safeNum(li.vatPct, 0), 0, 100);
+      const vatAmt = (netAfterExtra * vatPct) / 100;
+
+      return s + vatAmt;
+    }, 0);
+
+    return round2(sumVat);
+  }, [lineItems, total, extraDiscount]);
+
+  const totalDiscount = useMemo(() => {
+    // line discount + extra cash discount
+    return round2(lineDiscountTotal + extraDiscount);
+  }, [lineDiscountTotal, extraDiscount]);
+
+  const netPayableRaw = useMemo(() => {
+    // Total is net after line discounts (before VAT). Subtract extra discount, add VAT.
+    const base = Math.max(total - extraDiscount, 0);
+    return base + vat;
+  }, [total, extraDiscount, vat]);
+
+  const adjustment = useMemo(() => {
+    // auto: fix floating point / rounding to 2 decimals
+    return round2(round2(netPayableRaw) - netPayableRaw);
+  }, [netPayableRaw]);
+
+  const netPayable = useMemo(() => {
+    return round2(netPayableRaw + adjustment);
+  }, [netPayableRaw, adjustment]);
 
   const paid = useMemo(() => {
-    const p = toNumberSafe(paidDraft);
-    if (!Number.isFinite(p) || p < 0) return 0;
-    return Math.min(p, grandTotal);
-  }, [paidDraft, grandTotal]);
+    const raw = safeNum(String(paidDraft).trim(), 0);
+    return round2(clamp(raw, 0, netPayable)); // cannot exceed net payable
+  }, [paidDraft, netPayable]);
 
-  const due = useMemo(() => Math.max(grandTotal - paid, 0), [grandTotal, paid]);
+  const due = useMemo(() => {
+    return round2(Math.max(netPayable - paid, 0));
+  }, [netPayable, paid]);
 
+  // ------------------------------
+  // For extra discount
+  // ------------------------------
+  const commitExtraDiscount = () => {
+    setExtraDiscountDraft((v) => {
+      const raw = safeNum(String(v).trim(), 0);
+      return String(round2(clamp(raw, 0, total)));
+    });
+  };
+
+  const commitPaid = () => {
+    setPaidDraft((v) => {
+      const raw = safeNum(String(v).trim(), 0);
+      return String(round2(clamp(raw, 0, netPayable)));
+    });
+  };
   return (
     <div className="h-screen w-full bg-white p-2">
       {/* ======================================================
@@ -682,15 +788,19 @@ export default function SalesPage() {
         onResetAll={resetAll}
         onClearEntry={clearProductEntry}
         // financial demo
-        subtotal={subtotal}
-        discountDraft={discountDraft}
-        setDiscountDraft={setDiscountDraft}
-        vatPctDraft={vatPctDraft}
-        setVatPctDraft={setVatPctDraft}
-        vatAmount={vatAmount}
-        grandTotal={grandTotal}
+        total={total}
+        vat={vat}
+        totalDiscount={totalDiscount}
+        adjustment={adjustment}
+        netPayable={netPayable}
+        extraDiscountDraft={extraDiscountDraft}
+        setExtraDiscountDraft={setExtraDiscountDraft}
+        onCommitExtraDiscount={commitExtraDiscount}
+        paymentMethod={paymentMethod}
+        setPaymentMethod={setPaymentMethod}
         paidDraft={paidDraft}
         setPaidDraft={setPaidDraft}
+        onCommitPaid={commitPaid}
         due={due}
         // quantity updated
 
