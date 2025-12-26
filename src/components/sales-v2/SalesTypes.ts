@@ -1,4 +1,17 @@
-export type LineItem = {
+type PaymentMethod = "cash" | "card" | "bank";
+
+type Product = {
+  id: string;
+  name: string;
+  sku?: string;
+  unit?: string;
+  defaultRate: number;
+
+  defaultDiscountPct?: number; // already used
+  defaultVatPct?: number; // ✅ NEW (per product default VAT%)
+};
+
+type LineItem = {
   lineId: string;
   productId: string;
   name: string;
@@ -6,17 +19,14 @@ export type LineItem = {
   unit?: string;
   qty: number;
   rate: number;
-  amount: number;
-};
 
-export type Product = {
-  id: string;
-  name: string;
-  sku?: string;
-  unit?: string;
-  defaultRate: number;
-};
+  discountDefaultLimitPct: number;
+  discountPct: number;
 
+  vatPct: number; // ✅ NEW (stored per line)
+
+  amount: number; // net amount after discount (before VAT)
+};
 // --------------------------------
 export type PatientType = "outdoor" | "indoor";
 
@@ -51,3 +61,6 @@ export type CustomerDetailsModuleProps = {
   searchRegisteredCustomers: (query: string) => Promise<CustomerSearchOption[]>;
   fetchRegisteredCustomer: (customerId: string) => Promise<CustomerInfo | null>;
 };
+
+export type SalesUserRole = "admin" | "staff";
+export type SalesUser = { id: string; name: string; role: SalesUserRole };

@@ -42,6 +42,7 @@ import {
   CustomerSearchOption,
   LineItem,
   Product,
+  SalesUser,
 } from "@/components/sales-v2/SalesTypes";
 import { money } from "@/components/medicine-purchese/MedicinePurcheseTypes";
 import { ProductLineItemsTable } from "@/components/sales-v2/ProductLineItemsTable";
@@ -50,6 +51,11 @@ import { ProductQuickEntryRow } from "@/components/sales-v2/ProductQuickEntryRow
 import { SalesSection } from "@/components/sales-v2/SalesSection";
 import { CustomerInfoForm } from "@/components/sales-v2/CustomerInfoForm";
 import { CustomerDetailsModule } from "@/components/sales-v2/CustomerDetailsModule";
+import {
+  calcNetAmount,
+  clamp,
+  discountMaxPct,
+} from "@/components/sales-v2/SalesHelpe";
 
 /* ============================================================
  * 1) TYPES
@@ -290,9 +296,102 @@ export default function SalesPage() {
     []
   );
 
+  // ---------------------------------------
+  // Discount Calculations
+  // --------------------------------------
+  const user: SalesUser = useMemo(
+    () => ({ id: "u1", name: "Cashier", role: "staff" }), // demo
+    []
+  );
+
+  const [discountEdits, setDiscountEdits] = useState<Record<string, string>>(
+    {}
+  );
+
+  const changeLineDiscount = (lineId: string, deltaPct: number) => {
+    setLineItems((prev) =>
+      prev.map((li) => {
+        if (li.lineId !== lineId) return li;
+
+        const maxPct = discountMaxPct(user, li.discountDefaultLimitPct);
+        const nextPct = clamp(
+          (Number.isFinite(li.discountPct) ? li.discountPct : 0) + deltaPct,
+          0,
+          maxPct
+        );
+
+        if (nextPct === li.discountPct) return li;
+
+        const { net, discountPctApplied } = calcNetAmount({
+          user,
+          qty: li.qty,
+          rate: li.rate,
+          discountPct: nextPct,
+          discountDefaultLimitPct: li.discountDefaultLimitPct,
+        });
+
+        // keep input text synced
+        setDiscountEdits((m) => ({
+          ...m,
+          [lineId]: String(discountPctApplied),
+        }));
+
+        return { ...li, discountPct: discountPctApplied, amount: net };
+      })
+    );
+  };
+
+  const incLineDiscount = (lineId: string) => changeLineDiscount(lineId, +1);
+  const decLineDiscount = (lineId: string) => changeLineDiscount(lineId, -1);
+
+  const commitDiscountEdit = (lineId: string) => {
+    const li = lineItems.find((x) => x.lineId === lineId);
+    if (!li) return;
+
+    const raw = String(discountEdits[lineId] ?? "").trim();
+
+    // empty => 0
+    const parsed = raw === "" ? 0 : Number(raw);
+
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      // revert to current, do not poison state
+      setDiscountEdits((m) => ({ ...m, [lineId]: String(li.discountPct) }));
+      setProductRowError("Discount must be a valid number (0–cap).");
+      return;
+    }
+
+    const maxPct = discountMaxPct(user, li.discountDefaultLimitPct);
+    const nextPct = clamp(parsed, 0, maxPct);
+
+    if (parsed > maxPct) {
+      setProductRowError(`Discount capped at ${maxPct}% for this product.`);
+    } else {
+      setProductRowError(null);
+    }
+
+    const { net, discountPctApplied } = calcNetAmount({
+      user,
+      qty: li.qty,
+      rate: li.rate,
+      discountPct: nextPct,
+      discountDefaultLimitPct: li.discountDefaultLimitPct,
+    });
+
+    setLineItems((prev) =>
+      prev.map((x) =>
+        x.lineId === lineId
+          ? { ...x, discountPct: discountPctApplied, amount: net }
+          : x
+      )
+    );
+
+    setDiscountEdits((m) => ({ ...m, [lineId]: String(discountPctApplied) }));
+  };
+
   // ----------------------------
   // Product actions (add/remove/clear)
   // ----------------------------
+
   const clearProductEntry = () => {
     setPickedProduct(null);
     setQtyDraft("");
@@ -303,43 +402,42 @@ export default function SalesPage() {
   };
 
   const addLineItem = (p: Product, qty: number, rate: number) => {
-    // Merge strategy: same product + same rate => accumulate qty
-    setLineItems((prev) => {
-      const idx = prev.findIndex(
-        (x) => x.productId === p.id && x.rate === rate
-      );
-      if (idx >= 0) {
-        const next = [...prev];
-        const existing = next[idx];
-        const newQty = existing.qty + qty;
-        const newAmount = newQty * existing.rate;
+    const defaultLimit = clamp(p.defaultDiscountPct ?? 0, 0, 100);
 
-        next[idx] = {
-          ...existing,
-          qty: newQty,
-          amount: newAmount,
-        };
-        return next;
-      }
-
-      const li: LineItem = {
-        lineId: uid("line"),
-        productId: p.id,
-        name: p.name,
-        sku: p.sku,
-        unit: p.unit,
-        qty,
-        rate,
-        amount: qty * rate,
-      };
-
-      return [li, ...prev];
+    const { discountPctApplied, net } = calcNetAmount({
+      user,
+      qty,
+      rate,
+      discountPct: defaultLimit,
+      discountDefaultLimitPct: defaultLimit,
     });
+
+    const lineId = uid("line");
+
+    const li: LineItem = {
+      lineId,
+      productId: p.id,
+      name: p.name,
+      sku: p.sku,
+      unit: p.unit,
+      qty,
+      rate,
+      discountDefaultLimitPct: defaultLimit,
+      discountPct: discountPctApplied,
+      amount: net,
+    };
+
+    setLineItems((prev) => [li, ...prev]);
+    setDiscountEdits((m) => ({ ...m, [lineId]: String(discountPctApplied) }));
   };
 
   const removeLineItem = (lineId: string) => {
     setLineItems((prev) => prev.filter((x) => x.lineId !== lineId));
     setQtyEdits((m) => {
+      const { [lineId]: _, ...rest } = m;
+      return rest;
+    });
+    setDiscountEdits((m) => {
       const { [lineId]: _, ...rest } = m;
       return rest;
     });
@@ -603,6 +701,14 @@ export default function SalesPage() {
           setQtyEdits((m) => ({ ...m, [lineId]: v }))
         }
         onQtyCommit={commitQtyEdit}
+        // For product Line discount
+        discountEdits={discountEdits}
+        onIncDiscount={incLineDiscount}
+        onDecDiscount={decLineDiscount}
+        onDiscountDraftChange={(id, v) =>
+          setDiscountEdits((m) => ({ ...m, [id]: v }))
+        }
+        onDiscountCommit={commitDiscountEdit}
       />
     </div>
   );

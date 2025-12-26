@@ -48,6 +48,13 @@ export function ProductTablePanel(props: {
   qtyEdits: Record<string, string>;
   onQtyDraftChange: (lineId: string, v: string) => void;
   onQtyCommit: (lineId: string) => void;
+
+  // For Product Line Discount
+  discountEdits: Record<string, string>;
+  onIncDiscount: (lineId: string) => void;
+  onDecDiscount: (lineId: string) => void;
+  onDiscountDraftChange: (lineId: string, v: string) => void;
+  onDiscountCommit: (lineId: string) => void;
 }) {
   const header = (
     <div className="flex items-center justify-between gap-3">
@@ -136,6 +143,11 @@ export function ProductTablePanel(props: {
         qtyEdits={props.qtyEdits}
         onQtyDraftChange={props.onQtyDraftChange}
         onQtyCommit={props.onQtyCommit}
+        discountEdits={props.discountEdits}
+        onIncDiscount={props.onIncDiscount}
+        onDecDiscount={props.onDecDiscount}
+        onDiscountDraftChange={props.onDiscountDraftChange}
+        onDiscountCommit={props.onDiscountCommit}
       />
     </Panel>
   );

@@ -66,6 +66,13 @@ export function SalesSection(props: {
   paidDraft: string;
   setPaidDraft: (v: string) => void;
   due: number;
+
+  // For product line Discount
+  discountEdits: Record<string, string>;
+  onIncDiscount: (lineId: string) => void;
+  onDecDiscount: (lineId: string) => void;
+  onDiscountDraftChange: (lineId: string, v: string) => void;
+  onDiscountCommit: (lineId: string) => void;
 }) {
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
@@ -103,6 +110,11 @@ export function SalesSection(props: {
           qtyEdits={props.qtyEdits}
           onQtyDraftChange={props.onQtyDraftChange}
           onQtyCommit={props.onQtyCommit}
+          discountEdits={props.discountEdits}
+          onIncDiscount={props.onIncDiscount}
+          onDecDiscount={props.onDecDiscount}
+          onDiscountDraftChange={props.onDiscountDraftChange}
+          onDiscountCommit={props.onDiscountCommit}
         />
       </div>
       {/* LEFT: FINANCIAL DEMO */}
