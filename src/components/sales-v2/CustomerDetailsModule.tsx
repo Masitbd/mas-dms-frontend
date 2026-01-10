@@ -50,7 +50,7 @@ CustomerDetailsModuleProps) {
           </div>
         </div>
 
-        <ButtonGroup>
+        {/* <ButtonGroup>
           {updateDefaults ? (
             <Button
               appearance="ghost"
@@ -85,7 +85,7 @@ CustomerDetailsModuleProps) {
               Reset
             </span>
           </Button>
-        </ButtonGroup>
+        </ButtonGroup> */}
       </div>
     );
   }, [blankCustomer, onCustomerChange, onModeChange, updateDefaults]);

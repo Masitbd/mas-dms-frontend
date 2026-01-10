@@ -4,7 +4,7 @@
 
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import {
@@ -15,6 +15,7 @@ import {
 import CustomerCreateForm, {
   type CustomerFormValues,
 } from "@/components/customer/CustomerCreateForm";
+import Loading from "@/app/Loading";
 
 type ApiCustomer = any; // replace with your real type
 
@@ -110,7 +111,7 @@ const toFormDefaultsFromApi = (c: ApiCustomer): Partial<CustomerFormValues> => {
   };
 };
 
-export default function CustomerUpsertPage() {
+export function CustomerUpsertPage() {
   const searchParams = useSearchParams();
 
   const modeParam = (searchParams.get("mode") ?? "create").toLowerCase();
@@ -231,3 +232,13 @@ export default function CustomerUpsertPage() {
     </div>
   );
 }
+
+const MainComponent = () => {
+  return (
+    <Suspense fallback={<Loading />}>
+      <CustomerUpsertPage />
+    </Suspense>
+  );
+};
+
+export default MainComponent;

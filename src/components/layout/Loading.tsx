@@ -19,8 +19,8 @@ const Loading: React.FC<LoadingProps> = memo(({ loading, size = "md" }) => {
 
   if (size === "full") {
     return (
-      <div className="absolute inset-0 z-50 grid place-items-center bg-black/10 backdrop-blur-sm">
-        <div className="rounded-2xl bg-white/80 px-6 py-5 shadow-lg ring-1 ring-black/5 dark:bg-neutral-900/80">
+      <div className="absolute inset-0 z-50 grid place-items-center backdrop-blur-sm">
+        <div className="rounded-2xl bg-white/80 px-6 py-5 shadow-lg ring-1 ring-black/5 ">
           <ModernSpinner px={84} />
         </div>
         <span className="sr-only" role="status" aria-busy="true">

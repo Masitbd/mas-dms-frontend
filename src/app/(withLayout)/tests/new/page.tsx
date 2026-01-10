@@ -76,6 +76,7 @@ import { ENUM_MODE } from "@/enums/EnumMode";
 import { printInvoice } from "@/components/sales-v2/SalesInvoicePrinter";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import Loading from "@/components/layout/Loading";
 
 /* ============================================================
  * 1) TYPES
@@ -925,7 +926,10 @@ export default function SalesPage({
   // -------------------------------------
   // Fetching existing sale for edit mode
   // ------------------------------------
-  const [getSales] = useLazyGetSaleUpdateQuery();
+  const [
+    getSales,
+    { isLoading: salesDataLoading, isFetching: salesDataFetching },
+  ] = useLazyGetSaleUpdateQuery();
 
   useEffect(() => {
     if (params?.id) {
@@ -988,7 +992,12 @@ export default function SalesPage({
     }
   }, [getSales]);
   return (
-    <div className="h-screen w-full bg-white p-2">
+    <div className="h-screen w-full bg-white p-2 relative">
+      {/* ======================================================
+       *Loading component
+       * ====================================================== */}
+
+      <Loading size="full" loading={salesDataFetching || salesDataLoading} />
       {/* ======================================================
        * CUSTOMER INFORMATION (EXISTING)
        * ====================================================== */}

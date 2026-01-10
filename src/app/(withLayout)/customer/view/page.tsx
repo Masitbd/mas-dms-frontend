@@ -2,7 +2,7 @@
 // Next.js App Router usage: app/customer/view/page.tsx -> <CustomerDetailsModern />
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { Suspense, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import { Button, ButtonToolbar, Loader } from "rsuite";
@@ -24,6 +24,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useGetSingleCustomerQuery } from "@/redux/api/customer/customer.api";
+import Loading from "@/app/Loading";
 
 type Customer = any;
 
@@ -113,7 +114,7 @@ const Chip = ({
   );
 };
 
-export default function CustomerDetailsModern() {
+export function CustomerDetailsModern() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const uuid = searchParams.get("uuid") ?? "";
@@ -444,3 +445,12 @@ export default function CustomerDetailsModern() {
     </div>
   );
 }
+
+const MainComponent = () => {
+  return (
+    <Suspense fallback={<Loading />}>
+      <CustomerDetailsModern />
+    </Suspense>
+  );
+};
+export default MainComponent;

@@ -14,7 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { UseFormReset } from "react-hook-form";
 
-const MedicineEntryPage = () => {
+export const MedicineEntryPage = () => {
   const router = useRouter();
 
   const [createMedicine, { isLoading, isSuccess }] =
@@ -89,4 +89,12 @@ const MedicineEntryPage = () => {
   );
 };
 
-export default MedicineEntryPage;
+const MainComponent = () => {
+  return (
+    <Suspense fallback={<Loading />}>
+      <MedicineEntryPage />
+    </Suspense>
+  );
+};
+
+export default MainComponent;

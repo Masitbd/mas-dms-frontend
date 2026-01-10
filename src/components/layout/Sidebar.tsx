@@ -59,10 +59,10 @@ const DashSidebar = () => {
                 Purchase Entry
               </Nav.Item>
 
-              <Nav.Item href="/medicine-sale" eventKey="7" as={NavLink}>
+              <Nav.Item href="/tests" eventKey="7" as={NavLink}>
                 Sales
               </Nav.Item>
-              <Nav.Menu
+              {/* <Nav.Menu
                 eventKey="10"
                 trigger="hover"
                 title="Sales"
@@ -75,7 +75,7 @@ const DashSidebar = () => {
                 <Nav.Item eventKey="10-1" href="/sales/pos/new" as={NavLink}>
                   POS
                 </Nav.Item>
-              </Nav.Menu>
+              </Nav.Menu> */}
               <Nav.Menu
                 eventKey="9"
                 trigger="hover"
