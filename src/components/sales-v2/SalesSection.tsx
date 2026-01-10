@@ -5,7 +5,12 @@
 
 import { FinancialDemoPanel } from "./FinancialDemo";
 import { ProductTablePanel } from "./ProductTablePanel";
-import { LineItem, PaymentMethod, Product } from "./SalesTypes";
+import {
+  LineItem,
+  MedicineSalesSearchItem,
+  PaymentMethod,
+  Product,
+} from "./SalesTypes";
 
 export function SalesSection(props: {
   // product ui state
@@ -81,6 +86,13 @@ export function SalesSection(props: {
   onDecDiscount: (lineId: string) => void;
   onDiscountDraftChange: (lineId: string, v: string) => void;
   onDiscountCommit: (lineId: string) => void;
+
+  // Product quantity
+  getAvailableQty: (item: MedicineSalesSearchItem) => number;
+
+  // Financial demo actions
+  onCancel: () => void;
+  onSubmit: () => void;
 }) {
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
@@ -123,6 +135,7 @@ export function SalesSection(props: {
           onDecDiscount={props.onDecDiscount}
           onDiscountDraftChange={props.onDiscountDraftChange}
           onDiscountCommit={props.onDiscountCommit}
+          getAvailableQty={props.getAvailableQty}
         />
       </div>
       {/* LEFT: FINANCIAL DEMO */}
@@ -142,6 +155,8 @@ export function SalesSection(props: {
           setPaidDraft={props.setPaidDraft}
           onCommitPaid={props.onCommitPaid}
           due={props.due}
+          onCancel={props.onCancel}
+          onSubmit={props.onSubmit}
         />
       </div>
     </div>

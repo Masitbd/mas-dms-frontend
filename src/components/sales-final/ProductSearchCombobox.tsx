@@ -1,7 +1,11 @@
 import type React from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { Product } from "./SalesTypes";
-import { money, useDebouncedValue, useOnClickOutside } from "./SalesHelpe";
+import {
+  money,
+  useDebouncedValue,
+  useOnClickOutside,
+} from "@/components/sales-v2/SalesHelpe";
 import { Input, InputGroup } from "rsuite";
 import { Search, X } from "lucide-react";
 

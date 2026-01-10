@@ -9,6 +9,7 @@ import { Button, ButtonGroup, Divider, Message, Panel } from "rsuite";
 import { CustomerModeToggle } from "./CustomerModeToggle";
 import { RegisteredCustomerSearch } from "./RegisteredCustomerSearch";
 import { CustomerInfoForm } from "./CustomerInfoForm";
+import { useLazyGetSingleCustomerQuery } from "@/redux/api/customer/customer.api";
 
 export function CustomerDetailsModule({
   mode,
@@ -17,9 +18,8 @@ export function CustomerDetailsModule({
   onCustomerChange,
   blankCustomer,
   updateDefaults,
-  searchRegisteredCustomers,
-  fetchRegisteredCustomer,
-}: CustomerDetailsModuleProps) {
+}: // fetchRegisteredCustomer,
+CustomerDetailsModuleProps) {
   const [selectedRegisteredId, setSelectedRegisteredId] = useState<
     string | null
   >(customer.customerId ?? null);
@@ -108,18 +108,22 @@ export function CustomerDetailsModule({
     }
   };
 
+  // fetching and setting registered customer
+  const [fetchRegisteredCustomer, { isLoading: registeredCustomerLoading }] =
+    useLazyGetSingleCustomerQuery();
+
   const handlePickRegistered = async (customerId: string) => {
     setInfo({ type: "none" });
     setSelectedRegisteredId(customerId);
 
-    const fetched = await fetchRegisteredCustomer(customerId);
+    const fetched = await fetchRegisteredCustomer(customerId).unwrap();
     if (!fetched) {
       setInfo({ type: "error", text: "Customer not found. Please try again." });
       return;
     }
 
     const next: CustomerInfo = {
-      ...fetched,
+      ...fetched?.data,
       patientType: customer.patientType ?? fetched.patientType ?? "outdoor",
     };
 
@@ -163,7 +167,6 @@ export function CustomerDetailsModule({
               }
               await handlePickRegistered(val);
             }}
-            searchRegisteredCustomers={searchRegisteredCustomers}
           />
         </div>
       ) : null}

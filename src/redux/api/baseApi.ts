@@ -29,5 +29,13 @@ export const baseApi = createApi({
     "single-user",
     "customer-list",
     "single-customer",
+    "sale-list",
+    "single-sale",
+    "stock-list",
+    "sale",
+    "sale-ui",
+    "sale-invoice",
+    "sales-list",
+    "all-sales",
   ],
 });

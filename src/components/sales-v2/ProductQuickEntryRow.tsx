@@ -35,6 +35,9 @@ export function ProductQuickEntryRow(props: {
   onSelectProduct: (p: Product) => void;
   onAddRequested: () => void;
   setProductRowError: (v: string | null) => void;
+
+  // product available quantity
+  getAvailableQty: (item: Product) => number;
 }) {
   const qtyRef = useRef<HTMLInputElement | null>(null);
   const rateRef = useRef<HTMLInputElement | null>(null);
@@ -76,6 +79,7 @@ export function ProductQuickEntryRow(props: {
             props.setProductRowError(null);
           }}
           inputRef={searchInputRef}
+          getAvailableQty={props.getAvailableQty}
         />
       </div>
 
@@ -139,11 +143,11 @@ export function ProductQuickEntryRow(props: {
           <div className="mt-1 text-xs text-slate-600">
             Selected:{" "}
             <span className="font-medium text-slate-900">
-              {props.pickedProduct.name}
+              {props.pickedProduct.medicine?.name}
             </span>
-            {props.pickedProduct.sku ? (
+            {props.pickedProduct.medicine?.genericName ? (
               <span className="ml-2 text-slate-500">
-                ({props.pickedProduct.sku})
+                ({props.pickedProduct.medicine?.genericName})
               </span>
             ) : null}
           </div>

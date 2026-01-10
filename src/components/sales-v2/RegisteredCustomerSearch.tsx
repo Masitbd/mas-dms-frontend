@@ -2,29 +2,42 @@ import { useState } from "react";
 import { CustomerSearchOption } from "./SalesTypes";
 import { Button, InputPicker } from "rsuite";
 import { Search, X } from "lucide-react";
+import { useLazyGetCustomersQuery } from "@/redux/api/customer/customer.api";
 
 export function RegisteredCustomerSearch({
   value,
   onChange,
-  searchRegisteredCustomers,
 }: {
   value: string | null;
   onChange: (customerId: string | null) => void;
-  searchRegisteredCustomers: (query: string) => Promise<CustomerSearchOption[]>;
 }) {
+  const [searchRegisteredCustomers, { isLoading: loading, data: searchData }] =
+    useLazyGetCustomersQuery();
   const [data, setData] = useState<CustomerSearchOption[]>([]);
-  const [loading, setLoading] = useState(false);
 
   const handleSearch = async (query: string) => {
-    setLoading(true);
     try {
-      const results = await searchRegisteredCustomers(query);
-      setData(results);
+      const results = await searchRegisteredCustomers({
+        searchTerm: query,
+      }).unwrap();
+      setData(
+        results?.data?.result?.map((c: { fullName: string; uuid: string }) => ({
+          label: c.fullName,
+          value: c.uuid,
+        }))
+      );
     } finally {
-      setLoading(false);
     }
   };
 
+  const handleSelection = (uuid: string) => {
+    const customerData = searchData?.data?.result?.find(
+      (c: { uuid: string }) => c.uuid === uuid
+    );
+    if (customerData) {
+      onChange(customerData);
+    }
+  };
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1">

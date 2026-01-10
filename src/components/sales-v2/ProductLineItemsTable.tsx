@@ -1,7 +1,7 @@
 import { Button, Input } from "rsuite";
 import { LineItem, SalesUser } from "./SalesTypes";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { discountMaxPct, money } from "./SalesHelpe";
+import { calcMaxQtyForLine, discountMaxPct, money } from "./SalesHelpe";
 import { useSession } from "next-auth/react";
 
 export function ProductLineItemsTable(props: {
@@ -50,6 +50,8 @@ export function ProductLineItemsTable(props: {
                 user?.data?.user ?? ({ role: "user" } as unknown as SalesUser),
                 li?.discountDefaultLimitPct ?? 0
               );
+              const maxQty = calcMaxQtyForLine(props.lineItems, li);
+
               return (
                 <tr key={li.lineId} className="border-t border-slate-100">
                   <td className="px-3 py-2">
@@ -89,14 +91,16 @@ export function ProductLineItemsTable(props: {
                           // select all for fast overwrite (RSuite forwards event)
                           e?.target?.select?.();
                         }}
+                        title={`Max for this batch: ${maxQty}`}
                       />
 
                       <Button
                         appearance="ghost"
                         size="xs"
                         onClick={() => props.onIncQty(li.lineId)}
-                        title="Increase qty"
+                        title={`Increase qty (max ${maxQty})`}
                         className="rounded-lg"
+                        disabled={li.qty >= maxQty}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>

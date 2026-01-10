@@ -4,7 +4,7 @@
  */
 
 import { Button, Divider, Message, Panel } from "rsuite";
-import { LineItem, Product } from "./SalesTypes";
+import { LineItem, MedicineSalesSearchItem, Product } from "./SalesTypes";
 import { Search } from "lucide-react";
 import { ProductQuickEntryRow } from "./ProductQuickEntryRow";
 import { ProductLineItemsTable } from "./ProductLineItemsTable";
@@ -55,6 +55,9 @@ export function ProductTablePanel(props: {
   onDecDiscount: (lineId: string) => void;
   onDiscountDraftChange: (lineId: string, v: string) => void;
   onDiscountCommit: (lineId: string) => void;
+
+  // For Product Quantity
+  getAvailableQty: (item: MedicineSalesSearchItem) => number;
 }) {
   const header = (
     <div className="flex items-center justify-between gap-3">
@@ -107,7 +110,10 @@ export function ProductTablePanel(props: {
         productSearchQuery={props.productSearchQuery}
         setProductSearchQuery={(v) => {
           // Editing search should clear selected product if it diverges
-          if (props.pickedProduct && v.trim() !== props.pickedProduct.name) {
+          if (
+            props.pickedProduct &&
+            v.trim() !== props.pickedProduct.medicine?.name
+          ) {
             props.setPickedProduct(null);
             props.setRateDraft("");
           }
@@ -130,6 +136,7 @@ export function ProductTablePanel(props: {
         onSelectProduct={props.onSelectProduct}
         onAddRequested={props.onAddRequested}
         setProductRowError={props.setProductRowError}
+        getAvailableQty={props.getAvailableQty}
       />
 
       <Divider className="my-3" />

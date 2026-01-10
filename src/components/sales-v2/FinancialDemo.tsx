@@ -28,6 +28,8 @@ export function FinancialDemoPanel(props: {
   onCommitPaid: () => void;
 
   due: number;
+  onCancel: () => void;
+  onSubmit: () => void;
 }) {
   const paymentOptions = useMemo(
     () => [
@@ -150,9 +152,17 @@ export function FinancialDemoPanel(props: {
         </div>
       </div>
 
-      <div className="mt-2 text-[11px] text-slate-500">
-        VAT is computed per line using that line’s VAT%. Extra discount is
-        allocated proportionally to lines to keep VAT consistent.
+      <div className="mt-5 flex justify-end gap-2">
+        <Button
+          appearance="primary"
+          color="blue"
+          onClick={() => props.onSubmit()}
+        >
+          Submit
+        </Button>
+        <Button appearance="ghost" color="red" onClick={() => props.onCancel()}>
+          Cancel
+        </Button>
       </div>
     </Panel>
   );

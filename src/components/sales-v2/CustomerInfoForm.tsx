@@ -7,6 +7,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { CustomerInfo, CustomerMode } from "./SalesTypes";
 import { useEffect } from "react";
 import { RHFTextInput } from "./RHFTextInput";
+import PatientMiniSummary from "./RegisteredCustomerInfo";
 
 export function CustomerInfoForm({
   mode,
@@ -56,103 +57,104 @@ export function CustomerInfoForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-        <RHFTextInput
-          control={control}
-          name="name"
-          label="Name"
-          placeholder="Customer name"
-        />
-        <RHFTextInput
-          control={control}
-          name="field"
-          label="Field"
-          placeholder="Any label / group"
-        />
-        <RHFTextInput
-          control={control}
-          name="contactNo"
-          label="Contact No"
-          placeholder="e.g. 01XXXXXXXXX"
-        />
-        <RHFTextInput
-          control={control}
-          name="address"
-          label="Address"
-          placeholder="Customer address"
-        />
+      {mode === "unregistered" ? (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+          <RHFTextInput
+            control={control}
+            name="name"
+            label="Name"
+            placeholder="Customer name"
+          />
 
-        <div>
-          <div className="mb-1 text-xs font-medium text-slate-600">
-            Patient Type
+          <RHFTextInput
+            control={control}
+            name="contactNo"
+            label="Contact No"
+            placeholder="e.g. 01XXXXXXXXX"
+          />
+          <RHFTextInput
+            control={control}
+            name="address"
+            label="Address"
+            placeholder="Customer address"
+          />
+
+          <div>
+            <div className="mb-1 text-xs font-medium text-slate-600">
+              Patient Type
+            </div>
+
+            <Controller
+              control={control}
+              name="patientType"
+              defaultValue="outdoor"
+              render={({ field }) => (
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => field.onChange("outdoor")}
+                    className={[
+                      "rounded-xl border px-3 py-2 text-sm",
+                      field.value === "outdoor"
+                        ? "border-slate-900 bg-slate-900 text-white"
+                        : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
+                    ].join(" ")}
+                  >
+                    Outdoor
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => field.onChange("indoor")}
+                    className={[
+                      "rounded-xl border px-3 py-2 text-sm",
+                      field.value === "indoor"
+                        ? "border-slate-900 bg-slate-900 text-white"
+                        : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
+                    ].join(" ")}
+                  >
+                    Indoor
+                  </button>
+                </div>
+              )}
+            />
           </div>
 
-          <Controller
-            control={control}
-            name="patientType"
-            defaultValue="outdoor"
-            render={({ field }) => (
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => field.onChange("outdoor")}
-                  className={[
-                    "rounded-xl border px-3 py-2 text-sm",
-                    field.value === "outdoor"
-                      ? "border-slate-900 bg-slate-900 text-white"
-                      : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
-                  ].join(" ")}
-                >
-                  Outdoor
-                </button>
+          {isIndoor ? (
+            <>
+              <RHFTextInput
+                control={control}
+                name="bedNo"
+                label="Bed No"
+                placeholder="Required for indoor"
+                rules={{
+                  validate: (v) =>
+                    isIndoor
+                      ? !!String(v ?? "").trim() || "Bed No is required"
+                      : true,
+                }}
+              />
 
-                <button
-                  type="button"
-                  onClick={() => field.onChange("indoor")}
-                  className={[
-                    "rounded-xl border px-3 py-2 text-sm",
-                    field.value === "indoor"
-                      ? "border-slate-900 bg-slate-900 text-white"
-                      : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
-                  ].join(" ")}
-                >
-                  Indoor
-                </button>
-              </div>
-            )}
-          />
+              <RHFTextInput
+                control={control}
+                name="indoorBillNo"
+                label="Indoor Bill No"
+                placeholder="Required for indoor"
+                rules={{
+                  validate: (v) =>
+                    isIndoor
+                      ? !!String(v ?? "").trim() || "Indoor Bill No is required"
+                      : true,
+                }}
+              />
+            </>
+          ) : (
+            <></>
+          )}
         </div>
-
-        {isIndoor ? (
-          <>
-            <RHFTextInput
-              control={control}
-              name="bedNo"
-              label="Bed No"
-              placeholder="Required for indoor"
-              rules={{
-                validate: (v) =>
-                  isIndoor
-                    ? !!String(v ?? "").trim() || "Bed No is required"
-                    : true,
-              }}
-            />
-
-            <RHFTextInput
-              control={control}
-              name="indoorBillNo"
-              label="Indoor Bill No"
-              placeholder="Required for indoor"
-              rules={{
-                validate: (v) =>
-                  isIndoor
-                    ? !!String(v ?? "").trim() || "Indoor Bill No is required"
-                    : true,
-              }}
-            />
-          </>
-        ) : null}
-      </div>
+      ) : (
+        <PatientMiniSummary customerInfo={value} />
+      )}
     </form>
   );
 }

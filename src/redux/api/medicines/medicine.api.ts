@@ -34,6 +34,14 @@ const medicineApi = baseApi.injectEndpoints({
       }),
       providesTags: ["single-medicine"],
     }),
+    getMedicineForSales: build.query({
+      query: (query) => ({
+        url: `/medicines/sales`,
+        method: "GET",
+        params: query,
+      }),
+      providesTags: ["single-medicine"],
+    }),
     updateMedicine: build.mutation({
       query: (data) => ({
         url: `/medicines/${data._id}`,
@@ -61,4 +69,6 @@ export const {
   useUpdateMedicineMutation,
   useDeleteMedicineMutation,
   useLazyGetSingleMedicineQuery,
+  useGetMedicineForSalesQuery,
+  useLazyGetMedicineForSalesQuery,
 } = medicineApi;
