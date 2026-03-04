@@ -1,17 +1,15 @@
 "use client";
 
-import MedecineProfitLossTable from "@/components/reports/MedicineProfitLoss";
-import { useGetMedicineProfitOverviewQuery } from "@/redux/api/reports.api";
+import MedicineIncomeStatementDetails from "@/components/reports/MedicineIncomeStatementDetails";
+import { useGetMedicineIncomeStatementDetailsReportsQuery } from "@/redux/api/reports.api";
 import { IFormValues } from "@/types";
 import { formatDate } from "@/utils/formateDate";
 import { useState } from "react";
 import { Button, DatePicker, Form, Loader } from "rsuite";
 
-const MedicineProfitLossStatementPage = () => {
+const MedicineIncomeStatementDetailsPage = () => {
   const [isSearchEnable, setIsSearchEnable] = useState(false);
   const queryParams: Record<string, any> = {};
-
-  // console.log("data", data);
 
   const [formValue, setFormValue] = useState<IFormValues>({
     startDate: null,
@@ -25,29 +23,31 @@ const MedicineProfitLossStatementPage = () => {
     });
   };
 
-  if (formValue.startDate)
+  if (formValue.startDate) {
     queryParams.startDate = formatDate(formValue.startDate);
-  if (formValue.endDate) queryParams.endDate = formatDate(formValue.endDate);
-  if (formValue.branch) queryParams.branch = formValue.branch;
+  }
 
-  // Handle form submission
+  if (formValue.endDate) {
+    queryParams.endDate = formatDate(formValue.endDate);
+  }
+
   const handleSubmit = (currentValue: Record<string, any> | null) => {
     if (currentValue) {
       setIsSearchEnable(true);
     }
   };
 
-  const { data, isLoading, isFetching } = useGetMedicineProfitOverviewQuery(
-    queryParams,
-    {
+  const { data, isLoading, isFetching } =
+    useGetMedicineIncomeStatementDetailsReportsQuery(queryParams, {
       skip: !isSearchEnable,
-    }
-  );
+    });
+
   return (
     <div>
-      <h2 className="text-center text-xl font-semibold mt-5 px-5 py-2 bg-blue-600 text-gray-100 w-full max-w-80 mx-auto rounded-xl">
-        Medicine Profit Loss Statement
+      <h2 className="text-center text-xl font-semibold mt-5 px-5 py-2 bg-blue-600 text-gray-100 w-full max-w-[420px] mx-auto rounded-xl">
+        Medicine Income Statement Details
       </h2>
+
       <div className="px-2 my-5">
         <Form
           onSubmit={handleSubmit}
@@ -80,8 +80,9 @@ const MedicineProfitLossStatementPage = () => {
               }
             />
           </Form.Group>
+
           <Button
-            className="max-h-11 mt-5  w-full max-w-md mx-auto"
+            className="max-h-11 mt-5 w-full max-w-md mx-auto"
             size="sm"
             appearance="primary"
             type="submit"
@@ -97,7 +98,7 @@ const MedicineProfitLossStatementPage = () => {
         )}
 
         {!isLoading && !isFetching && data?.data && (
-          <MedecineProfitLossTable
+          <MedicineIncomeStatementDetails
             data={data.data as any}
             startDate={formValue.startDate}
             endDate={formValue.endDate}
@@ -108,4 +109,4 @@ const MedicineProfitLossStatementPage = () => {
   );
 };
 
-export default MedicineProfitLossStatementPage;
+export default MedicineIncomeStatementDetailsPage;

@@ -120,11 +120,39 @@ const DashSidebar = () => {
                   Medicine Stock Overview
                 </Nav.Item>
                 <Nav.Item
+                  eventKey="9-5-1"
+                  href="/reports/medicine-stock-statement"
+                  as={NavLink}
+                >
+                  Medicine Stock Statement
+                </Nav.Item>
+                <Nav.Item
                   eventKey="9-6"
                   href="/reports/medicine-profit-loss"
                   as={NavLink}
                 >
                   Medicine Profit Loss Statement
+                </Nav.Item>
+                <Nav.Item
+                  eventKey="9-7"
+                  href="/reports/medicine-income-statement-summary"
+                  as={NavLink}
+                >
+                  Medicine Income Statement Summary
+                </Nav.Item>
+                <Nav.Item
+                  eventKey="9-8"
+                  href="/reports/medicine-income-statement-details"
+                  as={NavLink}
+                >
+                  Medicine Income Statement Details
+                </Nav.Item>
+                <Nav.Item
+                  eventKey="9-9"
+                  href="/reports/medicine-expiry-statement"
+                  as={NavLink}
+                >
+                  Medicine Expiry Statement
                 </Nav.Item>
 
                 {/*  */}
